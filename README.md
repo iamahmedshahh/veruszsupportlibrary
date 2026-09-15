@@ -11,7 +11,7 @@ WebAssembly powered library exposing three primitives:
 ## Installation
 
 ```bash
-yarn add github:iamahmedshahh/zsupportextension#veruscryptolibrary
+pnpm add github:iamahmedshahh/zsupportextension#veruscryptolibrary
 ```
 
 ## Usage
@@ -165,7 +165,7 @@ console.log(decrypted.mimeType);                       // "text/plain"
 The library is on the `veruszsupportlib` branch:
 
 ```bash
-yarn add github:iamahmedshahh/veruszsupportlib#veruszsupportlib
+pnpm add github:iamahmedshahh/veruszsupportlib#veruszsupportlib
 ```
 
 ## Building WASM
@@ -174,6 +174,15 @@ yarn add github:iamahmedshahh/veruszsupportlib#veruszsupportlib
 cd veruszsupportweb
 wasm-pack build --target web --release --out-dir pkg
 ```
+
+## Building the Library
+
+Once the wasm pack is build navigate to the root of the project:
+
+```
+pnpm build
+```
+
 
 ## API
 
@@ -215,9 +224,45 @@ Returns decrypted bytes.
 |--------------------------|-----------|
 | Vite / Webpack / Rollup  | Yes       |
 | Next.js, Nuxt, SvelteKit | Yes       |
-| Node.js 16+              | Yes       |
+| Node.js 18+              | Yes       |
 | Deno, Bun                | Yes       |
 | Electron, Tauri          | Yes       |
+
+
+
+## Notes for pnpm 11+ consumers
+
+pnpm 11 blocks git-hosted transitive dependencies by default. Since this
+library depends on `verus-typescript-primitives`, which pulls in `blake2b`
+from a git fork, you'll hit `ERR_PNPM_EXOTIC_SUBDEP` on install.
+
+Two options to resolve:
+
+**Quick fix — allow exotic subdeps globally:**
+
+Add to your project's `pnpm-workspace.yaml`:
+
+```yaml
+blockExoticSubdeps: false
+```
+
+**Manual maintenance — keep the security default:**
+
+Add `blake2b` as a direct dependency in your `package.json`, then strip
+the transitive one with a `.pnpmfile.cjs` in your project root:
+
+```javascript
+function readPackage(pkg) {
+  if (pkg.name === 'verus-typescript-primitives' && pkg.dependencies?.blake2b) {
+    delete pkg.dependencies.blake2b;
+  }
+  return pkg;
+}
+
+module.exports = { hooks: { readPackage } };
+```
+
+Users on npm, yarn, or pnpm 10 and earlier don't need either fix.
 
 ## License
 

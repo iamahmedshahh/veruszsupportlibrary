@@ -1,6 +1,7 @@
 {
   "name": "veruszsupportlib",
   "version": "1.0.0",
+  "packageManager": "pnpm@11.18.0",
   "description": "Sapling encryption and key derivation for Verus DREAM Apps",
   "type": "module",
   "license": "MIT",
@@ -21,12 +22,15 @@
     "node": ">=18"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist"
   },
   "dependencies": {
     "bn.js": "^5.2.3",
     "buffer": "^6.0.3",
-    "verus-typescript-primitives": "github:VerusCoin/verus-typescript-primitives"
+    "verus-typescript-primitives": "github:VerusCoin/verus-typescript-primitives",
+    "blake2b": "git+https://github.com/VerusCoin/blake2b-wasm.git"
+
   },
   "devDependencies": {
     "@types/bn.js": "^5.2.0",
