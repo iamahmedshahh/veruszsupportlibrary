@@ -1,3 +1,4 @@
+import { KEYBYTES } from 'blake2b';
 import {
   z_getEncryptionAddress,
   encryptDescriptor,
@@ -6,21 +7,35 @@ import {
 } from './dist/index.es.js';
 
 import { Buffer } from 'buffer';
+import { bech32 } from 'bech32';
+import bs58check from 'bs58check';
+
+// Decode i-address to extract embedded hash160 (not hash it!)
+function iAddressToHash160(iAddress) {
+  const decoded = bs58check.decode(iAddress);
+  return new Uint8Array(decoded.slice(1)); // skip version byte
+}
 
 
 const seed = new Uint8Array(Buffer.from('aa'.repeat(32), 'hex'));
 
 const keys = z_getEncryptionAddress({
   seed,
-  fromId:          new Uint8Array(20).fill(1),
-  toId:            new Uint8Array(20).fill(2),
+  fromId:         iAddressToHash160('i4Wbn1whE3AoxqyTuT2xdQMNE5Uz1BCSuQ'),
+  toId:           iAddressToHash160('i3bCS2hfQXktHXHmXEAxKPeby5cb6Px6Le'),
+  hdIndex: 0,
   encryptionIndex: 0,
   returnSecret:    true,
 });
 
+
 console.log('═══ Channel keys ═══');
 console.log('ivk:', Buffer.from(keys.ivk).toString('hex'));
 
+// Decode address bytes to readable zs1... format
+const addressWords = bech32.toWords(Buffer.from(keys.address));
+const addressReadable = bech32.encode('zs', addressWords);
+console.log('address:', addressReadable);
 
 const message = 'hello from library';
 

@@ -1,14 +1,16 @@
 import { DataDescriptor } from 'verus-typescript-primitives';
 import { VdxfUniValue } from 'verus-typescript-primitives';
 import { DataDescriptorKey } from 'verus-typescript-primitives';
+import { type IdentityInput } from './identity';
 export { DataDescriptor, VdxfUniValue, DataDescriptorKey };
 export interface DerivationParams {
     seed?: Uint8Array;
     spendingKey?: Uint8Array;
     hdIndex?: number;
     encryptionIndex?: number;
-    fromId?: Uint8Array;
-    toId?: Uint8Array;
+    fromId?: IdentityInput;
+    toId?: IdentityInput;
+    system?: string;
     returnSecret?: boolean;
 }
 export interface ChannelKeys {

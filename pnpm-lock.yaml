@@ -10,12 +10,18 @@ importers:
 
   .:
     dependencies:
+      bech32:
+        specifier: ^2.0.0
+        version: 2.0.0
       blake2b:
         specifier: git+https://github.com/VerusCoin/blake2b-wasm.git
         version: blake2b-wasm@https://codeload.github.com/VerusCoin/blake2b-wasm/tar.gz/a16070b30bb8d8aee670f0c69b642913eca79998
       bn.js:
         specifier: ^5.2.3
         version: 5.2.5
+      bs58check:
+        specifier: ^4.0.0
+        version: 4.0.0
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -33,8 +39,8 @@ importers:
         specifier: ~5.8.3
         version: 5.8.3
       veruszsupport:
-        specifier: file:veruszsupportweb/pkg/
-        version: file:veruszsupportweb/pkg
+        specifier: link:veruszsupportweb/pkg/
+        version: link:veruszsupportweb/pkg
       vite:
         specifier: ^7.0.0
         version: 7.3.6(@types/node@22.20.2)
@@ -207,6 +213,10 @@ packages:
     os: [linux]
     libc: [glibc]
 
+  '@noble/hashes@1.8.0':
+    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
+    engines: {node: ^14.21.3 || >=16}
+
   '@rollup/rollup-android-arm-eabi@4.63.2':
     resolution: {integrity: sha512-Xa6RDoWa+hNiX6PgsljlH6W75RaONx3y6PVlbLhkEWW+GaPQ3dP5gwbL/erAzQHWwkvW5UxdD5l87Qx2FAQ/4A==}
     cpu: [arm]
@@ -361,6 +371,9 @@ packages:
   base-x@3.0.11:
     resolution: {integrity: sha512-xz7wQ8xDhdyP7tQxwdteLYeFfS68tSMNCZ/Y37WJ4bhGfKPpqEIlmIyueQHqOyoPhE6xNUqjzRr8ra0eF9VRvA==}
 
+  base-x@5.0.1:
+    resolution: {integrity: sha512-M7uio8Zt++eg3jPj+rHMfCC+IuygQHHCOU+IYsVtik6FWjuYpVt/+MRKcgsAMHh8mMFAwnB+Bs+mTrFiXjMzKg==}
+
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
@@ -384,8 +397,14 @@ packages:
   bs58@4.0.1:
     resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
 
+  bs58@6.0.0:
+    resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==}
+
   bs58check@2.0.0:
     resolution: {integrity: sha512-afttdRHvL1HCgBJqcMtoRXe8xCQ7fbUidoLp1JTRXT4bAvtfDyZx7mb79w82XkcdIFFstG3A4NhKOBdEsLbQbw==}
+
+  bs58check@4.0.0:
+    resolution: {integrity: sha512-FsGDOnFg9aVI9erdriULkd/JjEWONV/lQE5aYziB5PoBsXRind56lh8doIZIc9X4HoxT5x4bLjMWN1/NB8Zp5g==}
 
   buffer@6.0.3:
     resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==}
@@ -603,9 +622,6 @@ packages:
     resolution: {gitHosted: true, tarball: https://codeload.github.com/VerusCoin/verus-typescript-primitives/tar.gz/7a7b01db697222cd68507a9dbf15f289615ea890}
     version: 1.0.0
 
-  veruszsupport@file:veruszsupportweb/pkg:
-    resolution: {directory: veruszsupportweb/pkg, type: directory}
-
   vite-plugin-wasm@3.6.0:
     resolution: {integrity: sha512-mL/QPziiIA4RAA6DkaZZzOstdwbW5jO4Vz7Zenj0wieKWBlNvIvX5L5ljum9lcUX0ShNfBgCNLKTjNkRVVqcsw==}
     peerDependencies:
@@ -738,6 +754,8 @@ snapshots:
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
 
+  '@noble/hashes@1.8.0': {}
+
   '@rollup/rollup-android-arm-eabi@4.63.2':
     optional: true
 
@@ -831,6 +849,8 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
+  base-x@5.0.1: {}
+
   base64-js@1.5.1: {}
 
   base64url@3.0.1: {}
@@ -849,10 +869,19 @@ snapshots:
     dependencies:
       base-x: 3.0.11
 
+  bs58@6.0.0:
+    dependencies:
+      base-x: 5.0.1
+
   bs58check@2.0.0:
     dependencies:
       bs58: 4.0.1
       create-hash: 1.2.0
+
+  bs58check@4.0.0:
+    dependencies:
+      '@noble/hashes': 1.8.0
+      bs58: 6.0.0
 
   buffer@6.0.3:
     dependencies:
@@ -1137,8 +1166,6 @@ snapshots:
       bn.js: 5.2.3
       bs58check: 2.0.0
       create-hash: 1.2.0
-
-  veruszsupport@file:veruszsupportweb/pkg: {}
 
   vite-plugin-wasm@3.6.0(vite@7.3.6(@types/node@22.20.2)):
     dependencies:

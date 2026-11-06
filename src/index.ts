@@ -5,10 +5,13 @@ import {
 } from 'veruszsupport';
 
 import { DataDescriptor } from 'verus-typescript-primitives';
+import { assertIndex, assertFlag } from './validate';
+import { useThenWipe } from './memory';
 import { VdxfUniValue } from 'verus-typescript-primitives';
 import { DataDescriptorKey } from 'verus-typescript-primitives';
 import { BN } from 'bn.js';
 import { Buffer } from 'buffer';
+import { resolveIdentity, type IdentityInput } from './identity';
 
 export { DataDescriptor, VdxfUniValue, DataDescriptorKey };
 
@@ -18,8 +21,9 @@ export interface DerivationParams {
   spendingKey?:     Uint8Array;
   hdIndex?:         number;
   encryptionIndex?: number;
-  fromId?:          Uint8Array;
-  toId?:            Uint8Array;
+  fromId?:          IdentityInput;
+  toId?:            IdentityInput;
+  system?:          string;
   returnSecret?:    boolean;
 }
 
@@ -54,21 +58,26 @@ export interface EncryptedDescriptor {
  * Derives Sapling channel keys for encryption/decryption.
  */
 export function z_getEncryptionAddress(params: DerivationParams): ChannelKeys {
+
+  const hdIndex         = assertIndex(params.hdIndex, 'hdIndex');
+  const encryptionIndex = assertIndex(params.encryptionIndex, 'encryptionIndex');
+  const returnSecret    = assertFlag(params.returnSecret, 'returnSecret');
+
   const result = z_get_encryptionaddress(
     params.seed            ?? null,
     params.spendingKey     ?? null,
-    params.hdIndex         ?? null,
-    params.encryptionIndex ?? null,
-    params.fromId          ?? null,
-    params.toId            ?? null,
-    params.returnSecret    ?? false,
+    hdIndex,
+    encryptionIndex,
+    params.fromId != null ? resolveIdentity(params.fromId, params.system, 'fromId') : null,
+    params.toId   != null ? resolveIdentity(params.toId,   params.system, 'toId')   : null,
+    returnSecret,
   );
 
   return {
-    address:     new Uint8Array(result.address),
-    ivk:         new Uint8Array(result.ivk),
-    extfvk:      new Uint8Array(result.extfvk),
-    spendingKey: result.spendingKey ? new Uint8Array(result.spendingKey) : null,
+    address:     result.address,
+    ivk:         result.ivk,
+    extfvk:      result.extfvk,
+    spendingKey: result.spendingKey ?? null,
   };
 }
 
@@ -76,16 +85,19 @@ export function z_getEncryptionAddress(params: DerivationParams): ChannelKeys {
 // Encrypt and decrypt raw bytes, without flags or salt from Core Rust
 
 export function encryptData(params: EncryptParams): EncryptedPayload {
+
+  const returnSsk = assertFlag(params.returnSsk, 'returnSsk')
+
   const result = encrypt_v_data(
     params.address,
     params.data,
-    params.returnSsk ?? false,
+    returnSsk ,
   );
 
   return {
-    ephemeralPublicKey: new Uint8Array(result.ephemeralPublicKey),
-    objectdata:         new Uint8Array(result.encryptedData),
-    symmetricKey:       result.symmetricKey ? new Uint8Array(result.symmetricKey) : null,
+    ephemeralPublicKey: result.ephemeralPublicKey,
+    objectdata:         result.encryptedData,
+    symmetricKey:       result.symmetricKey ?? null,
   };
 }
 
@@ -94,11 +106,17 @@ export function decryptData(descriptor: EncryptedDescriptor): Uint8Array {
   const epk = descriptor.epk ?? null;
   const ssk = descriptor.ssk ?? null;
 
-  if (ivk) return new Uint8Array(decrypt_v_data(ivk, epk, descriptor.objectdata, null));
-  if (ssk) return new Uint8Array(decrypt_v_data(null, null, descriptor.objectdata, ssk));
+    if (ivk && ssk) throw new Error('descriptor has both ivk and ssk — provide only one');
 
-  throw new Error('descriptor has no decryption key — needs ivk or ssk');
-}
+        if (ivk) {
+          if (!epk) throw new Error('descriptor has ivk but no epk');
+          return decrypt_v_data(ivk, epk, descriptor.objectdata, null);
+        }
+        if (ssk) return decrypt_v_data(null, null, descriptor.objectdata, ssk);
+
+        throw new Error('descriptor has no decryption key — needs ivk or ssk');
+  }
+
 
 
 // Wraps the plaintext as a VdxfUniValue containing a DataDescriptor entry —
@@ -122,9 +140,12 @@ export interface DecryptDescriptorParams {
 
 
 function randomBytes32(): Buffer {
+  const c = globalThis.crypto;
+  if (!c || typeof c.getRandomValues !== 'function') {
+    throw new Error('crypto.getRandomValues is not available in this environment');
+  }
   const arr = new Uint8Array(32);
-  // Web Crypto — available in Node 19+, all browsers, Deno, Bun
-  crypto.getRandomValues(arr);
+  c.getRandomValues(arr);
   return Buffer.from(arr);
 }
 
@@ -167,11 +188,11 @@ export function encryptDescriptor(params: EncryptDescriptorParams): EncryptDescr
 
   const plaintext = wrapped.toBuffer();
 
-  const result = encryptData({
+  const result = useThenWipe(plaintext, (bytes) =>   encryptData({
     address:   params.address,
-    data:      new Uint8Array(plaintext),
+    data:      bytes,
     returnSsk: params.returnSsk ?? false,
-  });
+  }));
 
   // Build the descriptor that gets returned to the caller. 
 
@@ -217,18 +238,26 @@ export function decryptDescriptor(params: DecryptDescriptorParams): DataDescript
   //   [20-byte VDXF key] [version] [length] [serialized DataDescriptor]
   // Use VdxfUniValue.fromBuffer to parse it back into structured values.
 
-  const vdxfValue = new VdxfUniValue();
-  vdxfValue.fromBuffer(Buffer.from(decrypted), 0);
+  const plainView = Buffer.from(decrypted.buffer, decrypted.byteOffset, decrypted.byteLength);
 
+  // decrypted bytes are untrusted input: anyone can encrypt to a public address
+  const vdxfValue = new VdxfUniValue();
+  try {
+    vdxfValue.fromBuffer(plainView, 0);
+  } catch {
+    decrypted.fill(0);
+    throw new Error('decryptDescriptor: decrypted plaintext is malformed');
+  }
   // Walk the values array looking for the entry keyed by DataDescriptorKey —
   // that's where the original descriptor lives. The wrapper structure could
   // theoretically hold other entries, but for encryption we only put one in.
   for (const inner of vdxfValue.values) {
     const key = Object.keys(inner)[0];
-    if (key === DataDescriptorKey.vdxfid) {
-      return inner[key] as DataDescriptor;
-    }
+    const found = inner[key];
+      // input must actually be a DataDescriptor
+      if (!(found instanceof DataDescriptor)) break;
+      return found;
   }
-
+  decrypted.fill(0);
   throw new Error('decryptDescriptor: decrypted plaintext does not contain a DataDescriptor');
 }

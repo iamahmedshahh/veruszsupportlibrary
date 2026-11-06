@@ -23,22 +23,25 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist"
+    "build:wasm": "wasm-pack build veruszsupportweb --target bundler --release --out-dir pkg",
+    "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
+    "build:all": "pnpm build:wasm && pnpm build",
+    "test": "node tests/wasm.test.mjs && node tests/library.test.mjs"
   },
   "dependencies": {
+    "bech32": "^2.0.0",
+    "blake2b": "git+https://github.com/VerusCoin/blake2b-wasm.git",
     "bn.js": "^5.2.3",
+    "bs58check": "^4.0.0",
     "buffer": "^6.0.3",
-    "verus-typescript-primitives": "github:VerusCoin/verus-typescript-primitives",
-    "blake2b": "git+https://github.com/VerusCoin/blake2b-wasm.git"
-
+    "verus-typescript-primitives": "github:VerusCoin/verus-typescript-primitives"
   },
   "devDependencies": {
     "@types/bn.js": "^5.2.0",
     "@types/node": "^22.0.0",
     "typescript": "~5.8.3",
+    "veruszsupport": "link:veruszsupportweb/pkg/",
     "vite": "^7.0.0",
-    "vite-plugin-wasm": "^3.6.0",
-    "veruszsupport": "file:veruszsupportweb/pkg/"
-   
+    "vite-plugin-wasm": "^3.6.0"
   }
 }
