@@ -1203,7 +1203,7 @@ dependencies = [
 
 [[package]]
 name = "veruszsupportcore"
-version = "0.3.0"
+version = "1.0.0"
 dependencies = [
  "sapling-crypto",
  "secrecy",

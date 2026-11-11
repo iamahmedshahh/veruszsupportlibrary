@@ -1,0 +1,30 @@
+[package]
+name = "veruszsupportmobile"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.77"
+description = "React Native (Android and iOS) boundary of veruszsupport, made with uniffi"
+
+[lib]
+# cdylib: Android (.so). staticlib: iOS (.a). lib: tests.
+crate-type = ["cdylib", "staticlib", "lib"]
+
+[dependencies]
+secrecy = "0.8.0"
+# Must match uniffi-bindgen-react-native, which makes the TypeScript and C++ side.
+uniffi = "=0.31"
+veruszsupportcore = { path = "../veruszsupportcore" }
+
+# Same forks as veruszsupportweb. Cargo only reads [patch] from the crate being
+# built, so each crate repeats it.
+[patch.crates-io]
+sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree" }
+zcash_note_encryption = { git = "https://github.com/who-biz/zcash_note_encryption", branch = "ka_agree" }
+orchard = { git = "https://github.com/who-biz/orchard", branch = "ka_agree" }
+
+# No panic = "abort" here, unlike the web crate: uniffi turns a Rust panic into
+# a JS error, and abort would close the whole app instead.
+# No strip either: uniffi-bindgen-react-native reads the API from the library.
+[profile.release]
+lto = true
+codegen-units = 1
