@@ -12,8 +12,15 @@ dist-ssr
 *.local
 /veruszsupportweb/pkg
 /veruszsupportweb/target
+/veruszsupportcore/target
+/veruszsupportmobile/target
 .yarn
 .vscode
+modules/*/android/build
+modules/*/android/.cxx
+modules/*/android/src/main/jniLibs
+modules/*/*.xcframework
+/modules/*/android/.gradle
 
 # Editor directories and files
 .vscode/*
