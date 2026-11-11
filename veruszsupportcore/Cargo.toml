@@ -1,0 +1,18 @@
+[package]
+name = "veruszsupportcore"
+version = "0.3.0"
+edition = "2021"
+rust-version = "1.77"
+description = "Input checks and verus_zfunc calls shared by the web and mobile crates"
+
+[dependencies]
+secrecy = "0.8.0"
+sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree", package = "sapling-crypto" }
+verus_zfunc = { git = "https://github.com/iamahmedshahh/librustzcash", branch = "ka_agree-security-fixes" }
+
+# Same forks as veruszsupportweb. Cargo only reads [patch] from the crate being
+# built, so each crate repeats it.
+[patch.crates-io]
+sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree" }
+zcash_note_encryption = { git = "https://github.com/who-biz/zcash_note_encryption", branch = "ka_agree" }
+orchard = { git = "https://github.com/who-biz/orchard", branch = "ka_agree" }
