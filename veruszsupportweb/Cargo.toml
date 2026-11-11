@@ -25,6 +25,7 @@ sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "
 # artist librustzcash verus_zfunc functions
 
 verus_zfunc = { git = "https://github.com/iamahmedshahh/librustzcash" , branch = "ka_agree-security-fixes" }
+veruszsupportcore = { path = "../veruszsupportcore" }
 
 [patch.crates-io]
 sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree" }
