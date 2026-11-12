@@ -1,0 +1,58 @@
+{
+  "name": "@veruszsupportlib/react-native-veruszsupport",
+  "version": "1.0.0",
+    "repository": {
+    "type": "git",
+    "url": "https://github.com/iamahmedshahh/veruszsupportlibrary.git",
+    "directory": "modules/react-native-veruszsupport"
+  },
+  "description": "React native bindings for zsupport functions from Rust",
+  "main": "src/index",
+  "files": [
+    "src",
+    "cpp",
+    "android",
+    "!android/build",
+    "!android/.cxx",
+    "!android/.gradle",
+    "ios",
+    "!ios/build",
+    "*.podspec",
+    "*.xcframework"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "ubrn:android": "ubrn build android --and-generate --release",
+    "ubrn:ios": "ubrn build ios --and-generate --release",
+    "prepublishOnly": "pnpm ubrn:android"
+  },
+  "codegenConfig": {
+    "name": "ReactNativeVeruszsupportSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.veruszsupportlib.reactnativeveruszsupport"
+    }
+  },
+  "author": "Ahmed Shah",
+  "license": "MIT",
+  "homepage": "https://github.com/iamahmedshahh/veruszsupportlibrary#veruszsupportlib",
+  "create-react-native-library": {
+    "type": "turbo-module",
+    "languages": "kotlin-objc"
+  },
+  "dependencies": {
+    "@ubjs/core": "0.31.0-7",
+    "uniffi-bindgen-react-native": "0.31.0-7"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "react": "19.3.0",
+    "react-native": "0.88.0"
+  }
+}

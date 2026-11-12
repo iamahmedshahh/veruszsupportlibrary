@@ -21,7 +21,7 @@ modules/*/android/.cxx
 modules/*/android/src/main/jniLibs
 modules/*/*.xcframework
 /modules/*/android/.gradle
-
+*.tgz
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

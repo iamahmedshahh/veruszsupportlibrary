@@ -19,26 +19,31 @@
   ],
   "sideEffects": false,
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "build:wasm": "wasm-pack build veruszsupportweb --target bundler --release --out-dir pkg",
     "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
-    "build:all": "pnpm build:wasm && pnpm build",
-    "test": "node tests/wasm.test.mjs && node tests/library.test.mjs"
+    "build:web": "pnpm build:wasm && pnpm build",
+    "build:android": "pnpm --filter @veruszsupportlib/react-native-veruszsupport --fail-if-no-match run ubrn:android",
+    "build:ios": "pnpm --filter @veruszsupportlib/react-native-veruszsupport --fail-if-no-match run ubrn:ios",
+    "build:all": "pnpm build:web && pnpm build:android",
+    "test": "cargo test --locked --manifest-path veruszsupportcore/Cargo.toml && cargo test --locked --manifest-path veruszsupportmobile/Cargo.toml",
+    "smoke": "node dist-test.mjs",
+    "clean": "rm -rf veruszsupportweb/pkg veruszsupportweb/target veruszsupportcore/target veruszsupportmobile/target",
+    "setup:web": "rustup target add wasm32-unknown-unknown && cargo install wasm-pack --locked",
+    "setup:android": "rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android && cargo install cargo-ndk --locked",
+    "setup:ios": "rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios",
+    "build:wasm": "wasm-pack build veruszsupportweb --target bundler --release --out-dir pkg -- --locked",
   },
   "dependencies": {
-    "bech32": "^2.0.0",
-    "blake2b": "git+https://github.com/VerusCoin/blake2b-wasm.git",
     "bn.js": "^5.2.3",
-    "bs58check": "^4.0.0",
     "buffer": "^6.0.3",
-    "verus-typescript-primitives": "github:VerusCoin/verus-typescript-primitives"
+    "verus-typescript-primitives": "git+https://github.com/VerusCoin/verus-typescript-primitives.git#d5e3068021cfa83e3aae489403f4d63aad0c1a6c"
   },
   "devDependencies": {
     "@types/bn.js": "^5.2.0",
     "@types/node": "^22.0.0",
+    "blake2b": "git+https://github.com/VerusCoin/blake2b-wasm.git",
     "typescript": "~5.8.3",
     "veruszsupport": "link:veruszsupportweb/pkg/",
     "vite": "^7.0.0",
