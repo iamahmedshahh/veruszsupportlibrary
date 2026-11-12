@@ -33,7 +33,7 @@
     "setup:web": "rustup target add wasm32-unknown-unknown && cargo install wasm-pack --locked",
     "setup:android": "rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android && cargo install cargo-ndk --locked",
     "setup:ios": "rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios",
-    "build:wasm": "wasm-pack build veruszsupportweb --target bundler --release --out-dir pkg -- --locked",
+    "build:wasm": "wasm-pack build veruszsupportweb --target bundler --release --out-dir pkg -- --locked"
   },
   "dependencies": {
     "bn.js": "^5.2.3",
