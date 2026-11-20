@@ -1,18 +1,48 @@
-/** ZIP-32 hardened index range: 0 ..= 2^31 - 1. Larger values make zip32 panic (WASM trap). */
-const MAX_HARDENED_INDEX = 0x7fffffff;
+import {invalidInput} from './errors'
 
-/** Optional index: undefined/null → null; otherwise must be an integer in hardened range. */
-export function assertIndex(v: unknown, field: string): number | null {
-  if (v === undefined || v === null) return null;
-  if (typeof v !== 'number' || !Number.isInteger(v) || v < 0 || v > MAX_HARDENED_INDEX) {
-    throw new Error(`${field} must be an integer between 0 and ${MAX_HARDENED_INDEX}`);
+/*
+ * Type checks for what TypeScript can't enforce at runtime, so a value of the
+ * wrong type fails the same way on every platform instead of being coerced.
+ * The values themselves (lengths, ranges, which keys go together) are checked
+ * in Rust, with the limits.
+ */
+
+/** An optional flag: null and undefined are false, anything else must be a boolean. */
+export function checkFlag(value: unknown, field: string): boolean {
+  if (value == null) {
+    return false
   }
-  return v;
+  if (typeof value !== 'boolean') {
+    throw invalidInput(`${field} must be a boolean`)
+  }
+  return value
 }
 
-/** Optional flag: undefined → false; otherwise must be a real boolean (no coercion). */
-export function assertFlag(v: unknown, field: string): boolean {
-  if (v === undefined) return false;
-  if (typeof v !== 'boolean') throw new Error(`${field} must be a boolean`);
-  return v;
+export function checkBytes(value: unknown, field: string): Uint8Array {
+  if (!(value instanceof Uint8Array)) {
+    throw invalidInput(`${field} must be a Uint8Array`)
+  }
+  return value
+}
+
+/** Optional bytes: null and undefined both mean not given. */
+export function checkOptionalBytes(
+  value: unknown,
+  field: string,
+): Uint8Array | undefined {
+  return value == null ? undefined : checkBytes(value, field)
+}
+
+/** An optional number: null and undefined both mean not given. */
+export function checkOptionalNumber(
+  value: unknown,
+  field: string,
+): number | undefined {
+  if (value == null) {
+    return undefined
+  }
+  if (typeof value !== 'number') {
+    throw invalidInput(`${field} must be a number`)
+  }
+  return value
 }

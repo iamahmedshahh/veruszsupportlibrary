@@ -1,0 +1,40 @@
+/** The two kinds of error, the same as veruszsupportcore's. */
+export type VerusZSupportErrorKind = 'InvalidInput' | 'Crypto'
+
+/**
+ * The one error the library throws, on the web and on React Native alike.
+ * The checks run in Rust, so both platforms give the same kinds and messages.
+ *
+ * - InvalidInput: the arguments were rejected before any cryptography ran.
+ *   One is missing, extra, of the wrong type, length or range. The call must
+ *   change to succeed.
+ * - Crypto: the cryptography failed (a key that is not valid, the wrong key
+ *   or the decrypted data is not a DataDescriptor.
+ */
+export class VerusZSupportError extends Error {
+  readonly kind: VerusZSupportErrorKind
+
+  constructor(
+    kind: VerusZSupportErrorKind,
+    message: string,
+    options?: ErrorOptions,
+  ) {
+    super(message, options)
+    this.name = 'VerusZSupportError'
+    this.kind = kind
+  }
+}
+
+export function isVerusZSupportErrorKind(
+  value: unknown,
+): value is VerusZSupportErrorKind {
+  return value === 'InvalidInput' || value === 'Crypto'
+}
+
+export function invalidInput(message: string): VerusZSupportError {
+  return new VerusZSupportError('InvalidInput', message)
+}
+
+export function cryptoError(message: string): VerusZSupportError {
+  return new VerusZSupportError('Crypto', message)
+}
