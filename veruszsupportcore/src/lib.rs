@@ -1,76 +1,39 @@
-//! shared Rust code by every platform: checks the inputs, then calls verus_zfunc.
+//! Shared Rust code for every platform: checks the inputs, then calls verus_zfunc.
 //!
 //! The web crate (wasm-bindgen) and the mobile crate (uniffi) only convert
 //! their own byte types to and from the types here, so both platforms accept
-//! the same inputs and report the same errors.
-
-use std::fmt;
+//! the same inputs and report the same errors, with the same messages.
+//!
+//! Every check that can run before the cryptography runs here and fails with
+//! `InvalidInput`. What only the cryptography can tell (a key that is not
+//! valid, the wrong key, a changed ciphertext) comes back from verus_zfunc as
+//! `Crypto`.
 
 use sapling_crypto::PaymentAddress;
 use secrecy::{ExposeSecret, Secret, SecretVec};
 
 pub use verus_zfunc::{ChannelKeys, EncryptedPayload};
 
-/// Upper bound on plaintext crossing the boundary. Policy value — tune to your largest real payload.
-const MAX_PAYLOAD_BYTES: usize = 1024 * 1024; // 1 MiB
-/// ChaCha20Poly1305 tag length added to every ciphertext.
-const AEAD_TAG_BYTES: usize = 16;
-/// ZIP-32 hardened indices must be < 2^31; verus_zfunc's ChildIndex::hardened asserts this (panic).
-const HARDENED_LIMIT: u32 = 1 << 31;
+mod error;
+mod input;
+pub mod limits;
 
-/// The one error type of the library. Its message is what the caller sees.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ZSupportError {
-    /// The caller passed a bad value. The call must change to succeed.
-    InvalidInput(String),
-    /// verus_zfunc failed, for example a wrong key or a changed ciphertext.
-    Crypto(String),
-}
+pub use error::VerusZSupportError;
+pub use input::index_from_js;
 
-impl fmt::Display for ZSupportError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            ZSupportError::InvalidInput(message) | ZSupportError::Crypto(message) => {
-                f.write_str(message)
-            }
-        }
-    }
-}
+use error::{crypto_error, invalid_input, too_long};
+use input::{check_index, public_array, secret_array};
+use limits::{
+    EPK_BYTES, IDENTITY_ID_BYTES, IVK_BYTES, MAX_PAYLOAD_BYTES, PAYMENT_ADDRESS_BYTES, SALT_BYTES,
+    SEED_LENGTHS, SPENDING_KEY_BYTES, SSK_BYTES, TAG_BYTES,
+};
 
-impl std::error::Error for ZSupportError {}
-
-fn invalid_input(message: &str) -> ZSupportError {
-    ZSupportError::InvalidInput(message.to_string())
-}
-
-fn invalid_length(field: &str, expected: usize) -> ZSupportError {
-    ZSupportError::InvalidInput(format!(
-        "INVALID_LENGTH: {field} must be exactly {expected} bytes"
-    ))
-}
-
-fn crypto_error(error: impl fmt::Display) -> ZSupportError {
-    ZSupportError::Crypto(error.to_string())
-}
-
-/// Copies public bytes (epk, hash160 IDs, address bytes) into a fixed-size array.
-fn public_array<const N: usize>(bytes: &[u8], field: &str) -> Result<[u8; N], ZSupportError> {
-    bytes.try_into().map_err(|_| invalid_length(field, N))
-}
-
-/// Copies key material (ivk, ssk, spending key) into a fixed-size Secret,
-/// which is wiped when dropped.
-fn secret_array<const N: usize>(
-    bytes: &SecretVec<u8>,
-    field: &str,
-) -> Result<Secret<[u8; N]>, ZSupportError> {
-    public_array(bytes.expose_secret(), field).map(Secret::new)
-}
-
-/// Derives the Sapling channel keys used for encryption and decryption.
+/// Derives the Sapling channel keys used for encryption and decryption, as
+/// the daemon's z_getencryptionaddress does.
 ///
-/// `seed` and `spending_key` are alternative key sources: pass one of them.
-pub fn z_get_encryptionaddress(
+/// `seed` and `spending_key` are alternative key sources: pass exactly one.
+/// `hd_index` picks the account under a seed, so it only goes with `seed`.
+pub fn z_get_encryption_address(
     seed: Option<SecretVec<u8>>,
     spending_key: Option<SecretVec<u8>>,
     hd_index: Option<u32>,
@@ -78,30 +41,35 @@ pub fn z_get_encryptionaddress(
     from_id: Option<&[u8]>,
     to_id: Option<&[u8]>,
     return_secret: bool,
-) -> Result<ChannelKeys, ZSupportError> {
-    // seed and spendingKey are alternative key sources — reject ambiguity
-    if seed.is_some() && spending_key.is_some() {
-        return Err(invalid_input(
-            "Provide either seed or spendingKey, not both",
-        ));
+) -> Result<ChannelKeys, VerusZSupportError> {
+    match (&seed, &spending_key) {
+        (Some(_), Some(_)) => return Err(invalid_input("seed and spendingKey cannot both be set")),
+        (None, None) => return Err(invalid_input("seed or spendingKey is required")),
+        _ => {}
     }
-    // verus_zfunc's hardened derivation asserts index < 2^31 — reject before it can panic
-    if hd_index.is_some_and(|i| i >= HARDENED_LIMIT) {
-        return Err(invalid_input("hdIndex must be less than 2^31"));
+    if seed
+        .as_ref()
+        .is_some_and(|seed| !SEED_LENGTHS.contains(&seed.expose_secret().len()))
+    {
+        return Err(invalid_input(format!(
+            "seed must be {} or {} bytes",
+            SEED_LENGTHS[0], SEED_LENGTHS[1]
+        )));
     }
-    if encryption_index.is_some_and(|i| i >= HARDENED_LIMIT) {
-        return Err(invalid_input("encryptionIndex must be less than 2^31"));
+    if spending_key.is_some() && hd_index.is_some() {
+        return Err(invalid_input("hdIndex can only be used with seed"));
     }
+    check_index(hd_index, "hdIndex")?;
+    check_index(encryption_index, "encryptionIndex")?;
 
-    let spending_key: Option<Secret<[u8; 169]>> = spending_key
-        .map(|bytes| secret_array(&bytes, "spending_key"))
+    let spending_key: Option<Secret<[u8; SPENDING_KEY_BYTES]>> = spending_key
+        .map(|bytes| secret_array(&bytes, "spendingKey"))
         .transpose()?;
-    let from_id: Option<[u8; 20]> = from_id
-        .map(|bytes| public_array(bytes, "from_id"))
+    let from_id: Option<[u8; IDENTITY_ID_BYTES]> = from_id
+        .map(|bytes| public_array(bytes, "fromId"))
         .transpose()?;
-    let to_id: Option<[u8; 20]> = to_id
-        .map(|bytes| public_array(bytes, "to_id"))
-        .transpose()?;
+    let to_id: Option<[u8; IDENTITY_ID_BYTES]> =
+        to_id.map(|bytes| public_array(bytes, "toId")).transpose()?;
 
     verus_zfunc::z_getencryptionaddress(
         seed.as_ref(),
@@ -115,47 +83,70 @@ pub fn z_get_encryptionaddress(
     .map_err(crypto_error)
 }
 
-/// Encrypts `data` to a Sapling payment address (43 bytes).
-pub fn encrypt_v_data(
+/// A fresh DataDescriptor salt, from the random source verus_zfunc uses for
+/// its keys: the OS on Android and iOS, crypto.getRandomValues on the web. So
+/// apps need no random-number polyfill of their own.
+pub fn fresh_salt() -> Result<[u8; SALT_BYTES], VerusZSupportError> {
+    let mut salt = [0u8; SALT_BYTES];
+    getrandom::getrandom(&mut salt).map_err(crypto_error)?;
+    Ok(salt)
+}
+
+/// Encrypts `data` to a Sapling payment address.
+pub fn encrypt_data(
     address: &[u8],
     data: SecretVec<u8>,
     return_ssk: bool,
-) -> Result<EncryptedPayload, ZSupportError> {
-    let address: [u8; 43] = public_array(address, "address")?;
+) -> Result<EncryptedPayload, VerusZSupportError> {
+    let address: [u8; PAYMENT_ADDRESS_BYTES] = public_array(address, "address")?;
     let payment_address = PaymentAddress::from_bytes(&address)
-        .ok_or_else(|| invalid_input("Invalid PaymentAddress bytes"))?;
+        .ok_or_else(|| invalid_input("address is not a valid Sapling payment address"))?;
 
     if data.expose_secret().len() > MAX_PAYLOAD_BYTES {
-        return Err(invalid_input("data exceeds maximum payload size"));
+        return Err(too_long("data", MAX_PAYLOAD_BYTES));
     }
 
     verus_zfunc::encrypt_data(&payment_address, &data, return_ssk).map_err(crypto_error)
 }
 
-/// Decrypts `data_to_decrypt` with exactly one key: `ivk` (with `epk`) or `ssk`.
-pub fn decrypt_v_data(
+/// Decrypts `encrypted_data` with exactly one key: `ivk` (with `epk`) or `ssk`.
+///
+/// `epk` is ignored with `ssk`, so a whole DataDescriptor can be passed as is.
+pub fn decrypt_data(
     ivk: Option<SecretVec<u8>>,
     epk: Option<&[u8]>,
-    data_to_decrypt: SecretVec<u8>,
+    encrypted_data: SecretVec<u8>,
     ssk: Option<SecretVec<u8>>,
-) -> Result<SecretVec<u8>, ZSupportError> {
+) -> Result<SecretVec<u8>, VerusZSupportError> {
     // exactly one key: ivk (with epk) or ssk — never silently prefer one
-    if ivk.is_some() && ssk.is_some() {
-        return Err(invalid_input(
-            "Provide either ivk (with epk) or ssk, not both",
-        ));
+    match (&ivk, &ssk) {
+        (Some(_), Some(_)) => return Err(invalid_input("ivk and ssk cannot both be set")),
+        (None, None) => return Err(invalid_input("ivk or ssk is required")),
+        _ => {}
     }
     // epk is only meaningful with ivk; drop it in ssk mode
     let epk = if ssk.is_some() { None } else { epk };
-
-    if data_to_decrypt.expose_secret().len() > MAX_PAYLOAD_BYTES + AEAD_TAG_BYTES {
-        return Err(invalid_input("datatodecrypt exceeds maximum payload size"));
+    if ivk.is_some() && epk.is_none() {
+        return Err(invalid_input("epk is required with ivk"));
     }
 
-    let ivk: Option<Secret<[u8; 32]>> = ivk.map(|bytes| secret_array(&bytes, "ivk")).transpose()?;
-    let epk: Option<[u8; 32]> = epk.map(|bytes| public_array(bytes, "epk")).transpose()?;
-    let ssk: Option<Secret<[u8; 32]>> = ssk.map(|bytes| secret_array(&bytes, "ssk")).transpose()?;
+    // A ciphertext is at least its tag; anything shorter was never one.
+    let length = encrypted_data.expose_secret().len();
+    if length < TAG_BYTES {
+        return Err(invalid_input(format!(
+            "encryptedData must be at least {TAG_BYTES} bytes"
+        )));
+    }
+    if length > MAX_PAYLOAD_BYTES + TAG_BYTES {
+        return Err(too_long("encryptedData", MAX_PAYLOAD_BYTES + TAG_BYTES));
+    }
 
-    verus_zfunc::decrypt_data(ivk.as_ref(), epk.as_ref(), &data_to_decrypt, ssk.as_ref())
+    let ivk: Option<Secret<[u8; IVK_BYTES]>> =
+        ivk.map(|bytes| secret_array(&bytes, "ivk")).transpose()?;
+    let epk: Option<[u8; EPK_BYTES]> = epk.map(|bytes| public_array(bytes, "epk")).transpose()?;
+    let ssk: Option<Secret<[u8; SSK_BYTES]>> =
+        ssk.map(|bytes| secret_array(&bytes, "ssk")).transpose()?;
+
+    verus_zfunc::decrypt_data(ivk.as_ref(), epk.as_ref(), &encrypted_data, ssk.as_ref())
         .map_err(crypto_error)
 }
