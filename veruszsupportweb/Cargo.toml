@@ -1,41 +1,27 @@
 [package]
 name = "veruszsupport"
-version = "1.1.0"
+version = "1.0.0"
 edition = "2021"
 rust-version = "1.77"
+description = "Web (WebAssembly) boundary of veruszsupport, made with wasm-bindgen"
 
 [lib]
-crate-type = ["cdylib"]
+# cdylib: the .wasm that wasm-pack builds.
+# rlib: lets veruszsupporttests call the exports.
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-# WASM-specific dependencies
-
-wasm-bindgen = "0.2.100"
 js-sys = "0.3"
-anyhow = "1.0.86"
 secrecy = "0.8.0"
-
-# Zcash dependencies using direct git forks to ensure correct code is used.
-
-zcash_primitives = { git = "https://github.com/who-biz/librustzcash", branch = "ka_agree", default-features = false }
-zcash_keys = { git = "https://github.com/who-biz/librustzcash", branch = "ka_agree", default-features = false, features = ["sapling"] }
-zcash_note_encryption = { git = "https://github.com/who-biz/zcash_note_encryption", branch = "ka_agree" }
-sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree", package = "sapling-crypto" }
-
-# artist librustzcash verus_zfunc functions
-
-verus_zfunc = { git = "https://github.com/iamahmedshahh/librustzcash" , branch = "ka_agree-security-fixes" }
 veruszsupportcore = { path = "../veruszsupportcore" }
+wasm-bindgen = "0.2.100"
 
+# Same forks as veruszsupportcore. Cargo only reads [patch] from the crate
+# being built, so each crate repeats it.
 [patch.crates-io]
 sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree" }
 zcash_note_encryption = { git = "https://github.com/who-biz/zcash_note_encryption", branch = "ka_agree" }
-orchard = { git = "https://github.com/who-biz/orchard", branch = "ka_agree" } # <-- FIXED
-
-[features]
-default = []
-
-
+orchard = { git = "https://github.com/who-biz/orchard", branch = "ka_agree" }
 
 [profile.release]
 opt-level = "z"

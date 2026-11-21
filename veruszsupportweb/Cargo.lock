@@ -333,27 +333,10 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 [[package]]
 name = "equihash"
 version = "0.2.0"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "blake2b_simd",
- "byteorder",
-]
-
-[[package]]
-name = "equihash"
-version = "0.2.0"
 source = "git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes#fe06017ddcc2adcebdf15bd6f605d9698afca625"
 dependencies = [
  "blake2b_simd",
  "byteorder",
-]
-
-[[package]]
-name = "f4jumble"
-version = "0.1.0"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "blake2b_simd",
 ]
 
 [[package]]
@@ -1213,31 +1196,26 @@ dependencies = [
  "sapling-crypto",
  "secrecy",
  "sha2",
- "zcash_keys 0.2.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
+ "zcash_keys",
  "zcash_note_encryption",
- "zcash_primitives 0.15.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
+ "zcash_primitives",
 ]
 
 [[package]]
 name = "veruszsupport"
-version = "1.1.0"
+version = "1.0.0"
 dependencies = [
- "anyhow",
  "js-sys",
- "sapling-crypto",
  "secrecy",
- "verus_zfunc",
  "veruszsupportcore",
  "wasm-bindgen",
- "zcash_keys 0.2.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_note_encryption",
- "zcash_primitives 0.15.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
 ]
 
 [[package]]
 name = "veruszsupportcore"
 version = "1.0.0"
 dependencies = [
+ "getrandom",
  "sapling-crypto",
  "secrecy",
  "verus_zfunc",
@@ -1306,34 +1284,13 @@ dependencies = [
 [[package]]
 name = "zcash_address"
 version = "0.3.2"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "bech32",
- "bs58",
- "f4jumble 0.1.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_encoding 0.2.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_protocol 0.1.1 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
-]
-
-[[package]]
-name = "zcash_address"
-version = "0.3.2"
 source = "git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes#fe06017ddcc2adcebdf15bd6f605d9698afca625"
 dependencies = [
  "bech32",
  "bs58",
- "f4jumble 0.1.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
- "zcash_encoding 0.2.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
- "zcash_protocol 0.1.1 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
-]
-
-[[package]]
-name = "zcash_encoding"
-version = "0.2.0"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "byteorder",
- "nonempty",
+ "f4jumble",
+ "zcash_encoding",
+ "zcash_protocol",
 ]
 
 [[package]]
@@ -1343,31 +1300,6 @@ source = "git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-secu
 dependencies = [
  "byteorder",
  "nonempty",
-]
-
-[[package]]
-name = "zcash_keys"
-version = "0.2.0"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "bech32",
- "blake2b_simd",
- "bls12_381",
- "bs58",
- "document-features",
- "group",
- "memuse",
- "nonempty",
- "rand_core",
- "sapling-crypto",
- "secrecy",
- "subtle",
- "tracing",
- "zcash_address 0.3.2 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_encoding 0.2.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_primitives 0.15.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_protocol 0.1.1 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zip32",
 ]
 
 [[package]]
@@ -1388,10 +1320,10 @@ dependencies = [
  "secrecy",
  "subtle",
  "tracing",
- "zcash_address 0.3.2 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
- "zcash_encoding 0.2.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
- "zcash_primitives 0.15.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
- "zcash_protocol 0.1.1 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
+ "zcash_address",
+ "zcash_encoding",
+ "zcash_primitives",
+ "zcash_protocol",
  "zip32",
 ]
 
@@ -1410,41 +1342,6 @@ dependencies = [
 [[package]]
 name = "zcash_primitives"
 version = "0.15.0"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "aes",
- "bip0039",
- "blake2b_simd",
- "byteorder",
- "document-features",
- "equihash 0.2.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "ff",
- "fpe",
- "group",
- "hex",
- "incrementalmerkletree",
- "jubjub",
- "memuse",
- "nonempty",
- "orchard",
- "rand",
- "rand_core",
- "redjubjub",
- "sapling-crypto",
- "sha2",
- "subtle",
- "tracing",
- "zcash_address 0.3.2 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_encoding 0.2.0 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_note_encryption",
- "zcash_protocol 0.1.1 (git+https://github.com/who-biz/librustzcash?branch=ka_agree)",
- "zcash_spec",
- "zip32",
-]
-
-[[package]]
-name = "zcash_primitives"
-version = "0.15.0"
 source = "git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes#fe06017ddcc2adcebdf15bd6f605d9698afca625"
 dependencies = [
  "aes",
@@ -1452,7 +1349,7 @@ dependencies = [
  "blake2b_simd",
  "byteorder",
  "document-features",
- "equihash 0.2.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
+ "equihash",
  "ff",
  "fpe",
  "group",
@@ -1469,21 +1366,12 @@ dependencies = [
  "sha2",
  "subtle",
  "tracing",
- "zcash_address 0.3.2 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
- "zcash_encoding 0.2.0 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
+ "zcash_address",
+ "zcash_encoding",
  "zcash_note_encryption",
- "zcash_protocol 0.1.1 (git+https://github.com/iamahmedshahh/librustzcash?branch=ka_agree-security-fixes)",
+ "zcash_protocol",
  "zcash_spec",
  "zip32",
-]
-
-[[package]]
-name = "zcash_protocol"
-version = "0.1.1"
-source = "git+https://github.com/who-biz/librustzcash?branch=ka_agree#5848de8c00d14ddb1c32e97d32de30b89bc16687"
-dependencies = [
- "document-features",
- "memuse",
 ]
 
 [[package]]

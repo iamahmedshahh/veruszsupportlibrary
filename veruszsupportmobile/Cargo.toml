@@ -6,8 +6,10 @@ rust-version = "1.77"
 description = "React Native (Android and iOS) boundary of veruszsupport, made with uniffi"
 
 [lib]
-# cdylib: Android (.so). staticlib: iOS (.a). lib: tests.
-crate-type = ["cdylib", "staticlib", "lib"]
+# staticlib: the .a that Android (android/CMakeLists.txt) and iOS link into
+# the app, and that uniffi-bindgen-react-native reads the API from.
+# lib: lets veruszsupporttests call the exports.
+crate-type = ["staticlib", "lib"]
 
 [dependencies]
 secrecy = "0.8.0"
