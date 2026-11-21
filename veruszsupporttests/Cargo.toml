@@ -1,0 +1,31 @@
+[package]
+name = "veruszsupporttests"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.77"
+description = "Tests for veruszsupportcore, veruszsupportmobile and veruszsupportweb, in one place"
+publish = false
+
+# src/lib.rs holds the values the tests share; tests/ has one file per crate.
+# core.rs and mobile.rs run with cargo test, web.rs with wasm-pack test --node.
+
+[dev-dependencies]
+secrecy = "0.8.0"
+veruszsupportcore = { path = "../veruszsupportcore" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+veruszsupportmobile = { path = "../veruszsupportmobile" }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+js-sys = "0.3"
+veruszsupport = { path = "../veruszsupportweb" }
+wasm-bindgen = "0.2.100"
+# Runs web.rs inside Node. Pairs with the wasm-bindgen in Cargo.lock (0.2.114).
+wasm-bindgen-test = "0.3.64"
+
+# Same forks as the other crates. Cargo only reads [patch] from the crate being
+# built, so each crate repeats it.
+[patch.crates-io]
+sapling-crypto = { git = "https://github.com/who-biz/sapling-crypto", branch = "ka_agree" }
+zcash_note_encryption = { git = "https://github.com/who-biz/zcash_note_encryption", branch = "ka_agree" }
+orchard = { git = "https://github.com/who-biz/orchard", branch = "ka_agree" }

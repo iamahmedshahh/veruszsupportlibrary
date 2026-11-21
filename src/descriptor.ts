@@ -94,10 +94,7 @@ export async function decryptDescriptor(
 
   const wrapper = new VdxfUniValue()
   try {
-    wrapper.fromBuffer(
-      Buffer.from(bytes),
-      0,
-    )
+    wrapper.fromBuffer(Buffer.from(bytes), 0)
   } catch {
     plaintext.fill(0)
     throw cryptoError('decrypted data is malformed')

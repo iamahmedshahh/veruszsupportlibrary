@@ -6,7 +6,7 @@
     "url": "https://github.com/iamahmedshahh/veruszsupportlibrary.git",
     "directory": "modules/react-native-veruszsupport"
   },
-  "description": "React native bindings for zsupport functions from Rust",
+  "description": "The native engine of veruszsupportlib on React Native: install it next to veruszsupportlib and import from veruszsupportlib",
   "main": "src/index",
   "files": [
     "src",
