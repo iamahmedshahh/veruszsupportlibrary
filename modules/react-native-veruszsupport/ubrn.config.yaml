@@ -9,3 +9,6 @@ android:
     - armeabi-v7a
     - x86
     - x86_64
+ios:
+  cargoExtras:
+    - --locked

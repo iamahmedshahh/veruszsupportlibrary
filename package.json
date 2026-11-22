@@ -1,52 +1,69 @@
 {
   "name": "veruszsupportlib",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "packageManager": "pnpm@11.18.0",
-  "description": "Sapling encryption and key derivation for Verus DREAM Apps",
+  "description": "Sapling encryption and key derivation for Verus apps, on the web and React Native",
   "type": "module",
   "license": "MIT",
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
+  "react-native": "./src/index.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.es.js"
+      "react-native": "./src/index.ts",
+      "import": "./dist/index.es.js",
+      "default": "./dist/index.es.js"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "engines": {
     "node": ">=22.12"
   },
   "scripts": {
-    "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc",
     "build:web": "pnpm build:wasm && pnpm build",
     "build:android": "pnpm --filter @veruszsupportlib/react-native-veruszsupport --fail-if-no-match run ubrn:android",
     "build:ios": "pnpm --filter @veruszsupportlib/react-native-veruszsupport --fail-if-no-match run ubrn:ios",
     "build:all": "pnpm build:web && pnpm build:android",
-    "test": "cargo test --locked --manifest-path veruszsupportcore/Cargo.toml && cargo test --locked --manifest-path veruszsupportmobile/Cargo.toml",
-    "smoke": "node dist-test.mjs",
-    "clean": "rm -rf veruszsupportweb/pkg veruszsupportweb/target veruszsupportcore/target veruszsupportmobile/target",
+    "test": "cargo test --locked --manifest-path veruszsupporttests/Cargo.toml",
+    "test:wasm": "wasm-pack test --node veruszsupporttests --locked",
+    "test:web": "node --test test/web.test.mjs",
+    "test:native": "vite build --config test/native/vite.config.ts && node --test test/native.test.mjs",
+    "test:all": "pnpm test && pnpm test:wasm && pnpm build:web && pnpm test:web && pnpm test:native",
+    "format": "prettier --write src test vite.config.ts",
+    "format:check": "prettier --check src test vite.config.ts",
+    "clean": "rm -rf veruszsupportweb/pkg veruszsupportweb/target veruszsupportcore/target veruszsupportmobile/target veruszsupporttests/target",
     "setup:web": "rustup target add wasm32-unknown-unknown && cargo install wasm-pack --locked",
     "setup:android": "rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android && cargo install cargo-ndk --locked",
     "setup:ios": "rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios",
-    "build:wasm": "wasm-pack build veruszsupportweb --target bundler --release --out-dir pkg -- --locked"
+    "build:wasm": "wasm-pack build veruszsupportweb --target web --release --out-dir pkg -- --locked"
   },
   "dependencies": {
-    "bn.js": "^5.2.3",
     "buffer": "^6.0.3",
     "verus-typescript-primitives": "git+https://github.com/VerusCoin/verus-typescript-primitives.git#d5e3068021cfa83e3aae489403f4d63aad0c1a6c"
   },
+  "peerDependencies": {
+    "@veruszsupportlib/react-native-veruszsupport": "1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@veruszsupportlib/react-native-veruszsupport": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@types/bn.js": "^5.2.0",
     "@types/node": "^22.0.0",
+    "@veruszsupportlib/react-native-veruszsupport": "workspace:*",
     "blake2b": "git+https://github.com/VerusCoin/blake2b-wasm.git",
+    "prettier": "3.9.6",
     "typescript": "~5.8.3",
-    "veruszsupport": "link:veruszsupportweb/pkg/",
-    "vite": "^7.0.0",
-    "vite-plugin-wasm": "^3.6.0"
+    "veruszsupportweb": "link:veruszsupportweb/pkg/",
+    "vite": "^7.0.0"
   }
 }

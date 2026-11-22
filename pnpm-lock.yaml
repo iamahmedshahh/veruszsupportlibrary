@@ -10,9 +10,6 @@ importers:
 
   .:
     dependencies:
-      bn.js:
-        specifier: ^5.2.3
-        version: 5.2.5
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -20,27 +17,27 @@ importers:
         specifier: git+https://github.com/VerusCoin/verus-typescript-primitives.git#d5e3068021cfa83e3aae489403f4d63aad0c1a6c
         version: https://codeload.github.com/VerusCoin/verus-typescript-primitives/tar.gz/d5e3068021cfa83e3aae489403f4d63aad0c1a6c
     devDependencies:
-      '@types/bn.js':
-        specifier: ^5.2.0
-        version: 5.2.0
       '@types/node':
         specifier: ^22.0.0
         version: 22.20.2
+      '@veruszsupportlib/react-native-veruszsupport':
+        specifier: workspace:*
+        version: link:modules/react-native-veruszsupport
       blake2b:
         specifier: git+https://github.com/VerusCoin/blake2b-wasm.git
         version: blake2b-wasm@https://codeload.github.com/VerusCoin/blake2b-wasm/tar.gz/a16070b30bb8d8aee670f0c69b642913eca79998
+      prettier:
+        specifier: 3.9.6
+        version: 3.9.6
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
-      veruszsupport:
+      veruszsupportweb:
         specifier: link:veruszsupportweb/pkg/
         version: link:veruszsupportweb/pkg
       vite:
         specifier: ^7.0.0
         version: 7.3.6(@types/node@22.20.2)(terser@5.51.2)
-      vite-plugin-wasm:
-        specifier: ^3.6.0
-        version: 3.6.0(vite@7.3.6(@types/node@22.20.2)(terser@5.51.2))
 
   modules/react-native-veruszsupport:
     dependencies:
@@ -518,9 +515,6 @@ packages:
   '@sinclair/typebox@0.27.12':
     resolution: {integrity: sha512-hhyNJ+nbR6ZR7pToHvllEFun9TL0sbL+tk/ON75lo+Xas054uez98qRbsuNt7MBCyZKK4+8Yli/OAGZhmfBZ/g==}
 
-  '@types/bn.js@5.2.0':
-    resolution: {integrity: sha512-DLbJ1BPqxvQhIGbeu8VbUC1DiAiahHtAYvA0ZEAa4P31F7IaArc8z3C3BRQdWX4mtLQuABG4yzp76ZrS02Ui1Q==}
-
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
@@ -604,9 +598,6 @@ packages:
 
   bn.js@5.2.3:
     resolution: {integrity: sha512-EAcmnPkxpntVL+DS7bO1zhcZNvCkxqtkd0ZY53h06GNQ3DEkkGZ/gKgmDv6DdZQGj9BgfSPKtJJ7Dp1GPP8f7w==}
-
-  bn.js@5.2.5:
-    resolution: {integrity: sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==}
 
   browserslist@4.29.5:
     resolution: {integrity: sha512-khTmKu5NGYTotqcYo8Bew2k4RAE9PuXRSFRXG2lQBrCEQHyeQ/vX6gKMxfokwywBsLiXZMnHsmWMG1pnO8J7uQ==}
@@ -1139,6 +1130,11 @@ packages:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
     engines: {node: ^10 || ^12 || >=14}
 
+  prettier@3.9.6:
+    resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -1360,11 +1356,6 @@ packages:
   verus-typescript-primitives@https://codeload.github.com/VerusCoin/verus-typescript-primitives/tar.gz/d5e3068021cfa83e3aae489403f4d63aad0c1a6c:
     resolution: {gitHosted: true, tarball: https://codeload.github.com/VerusCoin/verus-typescript-primitives/tar.gz/d5e3068021cfa83e3aae489403f4d63aad0c1a6c}
     version: 1.0.0
-
-  vite-plugin-wasm@3.6.0:
-    resolution: {integrity: sha512-mL/QPziiIA4RAA6DkaZZzOstdwbW5jO4Vz7Zenj0wieKWBlNvIvX5L5ljum9lcUX0ShNfBgCNLKTjNkRVVqcsw==}
-    peerDependencies:
-      vite: ^2 || ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
   vite@7.3.6:
     resolution: {integrity: sha512-4XP60spRGjSZFf1qYH+dJIkK2znL3zQfl9KkOV9MkkRR/3Dls0dxaBsQPTloEc5BLXWPL9vsOxopxyKoMmDueg==}
@@ -1817,10 +1808,6 @@ snapshots:
 
   '@sinclair/typebox@0.27.12': {}
 
-  '@types/bn.js@5.2.0':
-    dependencies:
-      '@types/node': 22.20.2
-
   '@types/estree@1.0.9': {}
 
   '@types/istanbul-lib-coverage@2.0.6': {}
@@ -1887,8 +1874,6 @@ snapshots:
       nanoassert: 1.0.0
 
   bn.js@5.2.3: {}
-
-  bn.js@5.2.5: {}
 
   browserslist@4.29.5:
     dependencies:
@@ -2516,6 +2501,8 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
+  prettier@3.9.6: {}
+
   pretty-format@29.7.0:
     dependencies:
       '@jest/schemas': 29.6.3
@@ -2797,10 +2784,6 @@ snapshots:
       bn.js: 5.2.3
       bs58check: 2.0.0
       create-hash: 1.2.0
-
-  vite-plugin-wasm@3.6.0(vite@7.3.6(@types/node@22.20.2)(terser@5.51.2)):
-    dependencies:
-      vite: 7.3.6(@types/node@22.20.2)(terser@5.51.2)
 
   vite@7.3.6(@types/node@22.20.2)(terser@5.51.2):
     dependencies:

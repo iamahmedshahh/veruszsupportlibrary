@@ -1202,16 +1202,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "veruszsupport"
-version = "1.0.0"
-dependencies = [
- "js-sys",
- "secrecy",
- "veruszsupportcore",
- "wasm-bindgen",
-]
-
-[[package]]
 name = "veruszsupportcore"
 version = "1.0.0"
 dependencies = [
@@ -1219,6 +1209,16 @@ dependencies = [
  "sapling-crypto",
  "secrecy",
  "verus_zfunc",
+]
+
+[[package]]
+name = "veruszsupportweb"
+version = "1.0.0"
+dependencies = [
+ "js-sys",
+ "secrecy",
+ "veruszsupportcore",
+ "wasm-bindgen",
 ]
 
 [[package]]

@@ -1831,16 +1831,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "veruszsupport"
-version = "1.0.0"
-dependencies = [
- "js-sys",
- "secrecy",
- "veruszsupportcore",
- "wasm-bindgen",
-]
-
-[[package]]
 name = "veruszsupportcore"
 version = "1.0.0"
 dependencies = [
@@ -1865,11 +1855,21 @@ version = "1.0.0"
 dependencies = [
  "js-sys",
  "secrecy",
- "veruszsupport",
  "veruszsupportcore",
  "veruszsupportmobile",
+ "veruszsupportweb",
  "wasm-bindgen",
  "wasm-bindgen-test",
+]
+
+[[package]]
+name = "veruszsupportweb"
+version = "1.0.0"
+dependencies = [
+ "js-sys",
+ "secrecy",
+ "veruszsupportcore",
+ "wasm-bindgen",
 ]
 
 [[package]]

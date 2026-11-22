@@ -9,8 +9,8 @@ import {
   initSync,
   limits as wasmLimits,
   z_get_encryption_address,
-} from 'veruszsupport'
-import wasmUrl from 'veruszsupport/veruszsupport_bg.wasm?url'
+} from 'veruszsupportweb'
+import wasmUrl from 'veruszsupportweb/veruszsupportweb_bg.wasm?url'
 
 import {type Engine} from './engine.types'
 import {isVerusZSupportErrorKind, VerusZSupportError} from './errors'

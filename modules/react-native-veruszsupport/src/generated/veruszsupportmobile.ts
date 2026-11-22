@@ -3,187 +3,394 @@
 /* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
-import nativeModule from "./veruszsupportmobile-ffi";
-import { type UniffiRustFutureContinuationCallback, type UniffiForeignFutureDroppedCallback, type UniffiForeignFutureDroppedCallbackStruct,
-} from "./veruszsupportmobile-ffi";
-import { type UniffiByteArray, AbstractFfiConverterByteArray, Cursor, FfiConverterArrayBuffer, FfiConverterBool, FfiConverterOptional, FfiConverterUInt32, FfiConverterUInt8, RustBuffer, UniffiError, UniffiInternalError, UniffiRustCaller, uniffiCreateFfiConverterString, uniffiCreateRecord, uniffiTypeNameSymbol, variantOrdinalSymbol,
-} from "@ubjs/core";
-const uniffiCaller = new UniffiRustCaller(() => ({ code: 0 }));
+import nativeModule from './veruszsupportmobile-ffi'
+import {
+  type UniffiRustFutureContinuationCallback,
+  type UniffiForeignFutureDroppedCallback,
+  type UniffiForeignFutureDroppedCallbackStruct,
+} from './veruszsupportmobile-ffi'
+import {
+  type UniffiByteArray,
+  AbstractFfiConverterByteArray,
+  Cursor,
+  FfiConverterArray,
+  FfiConverterArrayBuffer,
+  FfiConverterBool,
+  FfiConverterFloat64,
+  FfiConverterOptional,
+  FfiConverterUInt32,
+  FfiConverterUInt8,
+  RustBuffer,
+  UniffiError,
+  UniffiInternalError,
+  UniffiRustCaller,
+  uniffiCreateFfiConverterString,
+  uniffiCreateRecord,
+  uniffiTypeNameSymbol,
+  variantOrdinalSymbol,
+} from '@ubjs/core'
+const uniffiCaller = new UniffiRustCaller(() => ({code: 0}))
 
 const uniffiIsDebug =
   // @ts-ignore -- The process global might not be defined
-  typeof process !== "object" ||
+  typeof process !== 'object' ||
   // @ts-ignore -- The process global might not be defined
-  process?.env?.NODE_ENV !== "production" ||
-  false;
+  process?.env?.NODE_ENV !== 'production' ||
+  false
 
 // Public interface members begin here.
 
-export function decryptVData(ivk: ArrayBuffer | undefined, epk: ArrayBuffer | undefined, datatodecrypt: ArrayBuffer, ssk: ArrayBuffer | undefined): ArrayBuffer /*throws*/ {
-    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
-            /*liftError:*/ FfiConverterTypeZSupportError.lift.bind(FfiConverterTypeZSupportError),
-            /*caller:*/ (callStatus) => {
-                return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_decrypt_v_data(
+/**
+ * Decrypts `encrypted_data` with exactly one key: `ivk` (with `epk`) or `ssk`.
+ */
+export function decryptData(
+  ivk: ArrayBuffer | undefined,
+  epk: ArrayBuffer | undefined,
+  encryptedData: ArrayBuffer,
+  ssk: ArrayBuffer | undefined,
+): ArrayBuffer /*throws*/ {
+  const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+    /*liftError:*/ FfiConverterTypeVerusZSupportError.lift.bind(
+      FfiConverterTypeVerusZSupportError,
+    ),
+    /*caller:*/ callStatus => {
+      return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_decrypt_data(
         FfiConverterOptionalBytes.lower(ivk, nativeModule().rustbuffer_alloc),
         FfiConverterOptionalBytes.lower(epk, nativeModule().rustbuffer_alloc),
-        FfiConverterArrayBuffer.lower(datatodecrypt, nativeModule().rustbuffer_alloc),
+        FfiConverterArrayBuffer.lower(
+          encryptedData,
+          nativeModule().rustbuffer_alloc,
+        ),
         FfiConverterOptionalBytes.lower(ssk, nativeModule().rustbuffer_alloc),
-                callStatus);
-            },
-            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
-    );
-    try {
-        return FfiConverterArrayBuffer.lift(__rb);
-    } finally {
-        nativeModule().rustbuffer_free(__rb);
-    }
-    }
+        callStatus,
+      )
+    },
+    /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+  )
+  try {
+    return FfiConverterArrayBuffer.lift(__rb)
+  } finally {
+    nativeModule().rustbuffer_free(__rb)
+  }
+}
 
-export function encryptVData(address: ArrayBuffer, data: ArrayBuffer, returnSsk: boolean): EncryptedPayload /*throws*/ {
-    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
-            /*liftError:*/ FfiConverterTypeZSupportError.lift.bind(FfiConverterTypeZSupportError),
-            /*caller:*/ (callStatus) => {
-                return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_encrypt_v_data(
+/**
+ * Encrypts `data` to a Sapling payment address.
+ */
+export function encryptData(
+  address: ArrayBuffer,
+  data: ArrayBuffer,
+  returnSsk: boolean,
+): EncryptedPayload /*throws*/ {
+  const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+    /*liftError:*/ FfiConverterTypeVerusZSupportError.lift.bind(
+      FfiConverterTypeVerusZSupportError,
+    ),
+    /*caller:*/ callStatus => {
+      return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_encrypt_data(
         FfiConverterArrayBuffer.lower(address, nativeModule().rustbuffer_alloc),
         FfiConverterArrayBuffer.lower(data, nativeModule().rustbuffer_alloc),
         FfiConverterBool.lower(returnSsk, nativeModule().rustbuffer_alloc),
-                callStatus);
-            },
-            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
-    );
-    try {
-        return FfiConverterTypeEncryptedPayload.lift(__rb);
-    } finally {
-        nativeModule().rustbuffer_free(__rb);
-    }
-    }
+        callStatus,
+      )
+    },
+    /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+  )
+  try {
+    return FfiConverterTypeEncryptedPayload.lift(__rb)
+  } finally {
+    nativeModule().rustbuffer_free(__rb)
+  }
+}
 
-export function zGetEncryptionaddress(seed: ArrayBuffer | undefined, spendingKey: ArrayBuffer | undefined, hdIndex: number | undefined, encryptionIndex: number | undefined, fromId: ArrayBuffer | undefined, toId: ArrayBuffer | undefined, returnSecret: boolean): ChannelKeys /*throws*/ {
-    const __rb: Uint8Array = uniffiCaller.rustCallWithError(
-            /*liftError:*/ FfiConverterTypeZSupportError.lift.bind(FfiConverterTypeZSupportError),
-            /*caller:*/ (callStatus) => {
-                return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_z_get_encryptionaddress(
+/**
+ * A fresh DataDescriptor salt, from the OS random source.
+ */
+export function freshSalt(): ArrayBuffer /*throws*/ {
+  const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+    /*liftError:*/ FfiConverterTypeVerusZSupportError.lift.bind(
+      FfiConverterTypeVerusZSupportError,
+    ),
+    /*caller:*/ callStatus => {
+      return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_fresh_salt(
+        callStatus,
+      )
+    },
+    /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+  )
+  try {
+    return FfiConverterArrayBuffer.lift(__rb)
+  } finally {
+    nativeModule().rustbuffer_free(__rb)
+  }
+}
+
+/**
+ * The sizes and ranges the library checks.
+ */
+export function limits(): Limits {
+  const __rb: Uint8Array = uniffiCaller.rustCall(
+    /*caller:*/ callStatus => {
+      return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_limits(
+        callStatus,
+      )
+    },
+    /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+  )
+  try {
+    return FfiConverterTypeLimits.lift(__rb)
+  } finally {
+    nativeModule().rustbuffer_free(__rb)
+  }
+}
+
+/**
+ * Derives the Sapling channel keys used for encryption and decryption.
+ *
+ * The indices are JS numbers, checked in veruszsupportcore before use.
+ */
+export function zGetEncryptionAddress(
+  seed: ArrayBuffer | undefined,
+  spendingKey: ArrayBuffer | undefined,
+  hdIndex: number | undefined,
+  encryptionIndex: number | undefined,
+  fromId: ArrayBuffer | undefined,
+  toId: ArrayBuffer | undefined,
+  returnSecret: boolean,
+): ChannelKeys /*throws*/ {
+  const __rb: Uint8Array = uniffiCaller.rustCallWithError(
+    /*liftError:*/ FfiConverterTypeVerusZSupportError.lift.bind(
+      FfiConverterTypeVerusZSupportError,
+    ),
+    /*caller:*/ callStatus => {
+      return nativeModule().ubrn_uniffi_veruszsupportmobile_fn_func_z_get_encryption_address(
         FfiConverterOptionalBytes.lower(seed, nativeModule().rustbuffer_alloc),
-        FfiConverterOptionalBytes.lower(spendingKey, nativeModule().rustbuffer_alloc),
-        FfiConverterOptionalUInt32.lower(hdIndex, nativeModule().rustbuffer_alloc),
-        FfiConverterOptionalUInt32.lower(encryptionIndex, nativeModule().rustbuffer_alloc),
-        FfiConverterOptionalBytes.lower(fromId, nativeModule().rustbuffer_alloc),
+        FfiConverterOptionalBytes.lower(
+          spendingKey,
+          nativeModule().rustbuffer_alloc,
+        ),
+        FfiConverterOptionalFloat64.lower(
+          hdIndex,
+          nativeModule().rustbuffer_alloc,
+        ),
+        FfiConverterOptionalFloat64.lower(
+          encryptionIndex,
+          nativeModule().rustbuffer_alloc,
+        ),
+        FfiConverterOptionalBytes.lower(
+          fromId,
+          nativeModule().rustbuffer_alloc,
+        ),
         FfiConverterOptionalBytes.lower(toId, nativeModule().rustbuffer_alloc),
         FfiConverterBool.lower(returnSecret, nativeModule().rustbuffer_alloc),
-                callStatus);
-            },
-            /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
-    );
-    try {
-        return FfiConverterTypeChannelKeys.lift(__rb);
-    } finally {
-        nativeModule().rustbuffer_free(__rb);
-    }
-    }
+        callStatus,
+      )
+    },
+    /*liftString:*/ FfiConverterString.lift.bind(FfiConverterString),
+  )
+  try {
+    return FfiConverterTypeChannelKeys.lift(__rb)
+  } finally {
+    nativeModule().rustbuffer_free(__rb)
+  }
+}
 
 /**
  * Sapling channel keys. `spending_key` is set only when `return_secret` was true.
+ *
+ * No Debug: printing it would print the keys.
  */
 export type ChannelKeys = {
-    address: ArrayBuffer,
-    ivk: ArrayBuffer,
-    extfvk: ArrayBuffer,
-    spendingKey?: ArrayBuffer
+  address: ArrayBuffer
+  ivk: ArrayBuffer
+  extfvk: ArrayBuffer
+  spendingKey?: ArrayBuffer
 }
 
 /**
  * Generated factory for {@link ChannelKeys} record objects.
  */
 export const ChannelKeys = (() => {
-    const defaults = () => ({
-    });
-    const create = (() => {
-        return uniffiCreateRecord<ChannelKeys, ReturnType<typeof defaults>>(defaults);
-    })();
-    return Object.freeze({
-        create,
-        new: create,
-        defaults: () => Object.freeze(defaults()) as Partial<ChannelKeys>,
-    });
-})();
+  const defaults = () => ({})
+  const create = (() => {
+    return uniffiCreateRecord<ChannelKeys, ReturnType<typeof defaults>>(
+      defaults,
+    )
+  })()
+  return Object.freeze({
+    create,
+    new: create,
+    defaults: () => Object.freeze(defaults()) as Partial<ChannelKeys>,
+  })
+})()
 
 const FfiConverterTypeChannelKeys = (() => {
-    type TypeName = ChannelKeys;
-    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
-        readFromCursor(c: Cursor): TypeName {
-            return {
-                address: FfiConverterArrayBuffer.readFromCursor(c), 
-                ivk: FfiConverterArrayBuffer.readFromCursor(c), 
-                extfvk: FfiConverterArrayBuffer.readFromCursor(c), 
-                spendingKey: FfiConverterOptionalBytes.readFromCursor(c)
-            };
-        }
-        writeIntoCursor(value: TypeName, c: Cursor): void {
-            FfiConverterArrayBuffer.writeIntoCursor(value.address, c);
-            FfiConverterArrayBuffer.writeIntoCursor(value.ivk, c);
-            FfiConverterArrayBuffer.writeIntoCursor(value.extfvk, c);
-            FfiConverterOptionalBytes.writeIntoCursor(value.spendingKey, c);
-        }
-        allocationSize(value: TypeName): number {
-            return FfiConverterArrayBuffer.allocationSize(value.address) +
-             FfiConverterArrayBuffer.allocationSize(value.ivk) +
-             FfiConverterArrayBuffer.allocationSize(value.extfvk) +
-             FfiConverterOptionalBytes.allocationSize(value.spendingKey);
-            
-        }
-    };
-    return new FFIConverter();
-})();
+  type TypeName = ChannelKeys
+  class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+    readFromCursor(c: Cursor): TypeName {
+      return {
+        address: FfiConverterArrayBuffer.readFromCursor(c),
+        ivk: FfiConverterArrayBuffer.readFromCursor(c),
+        extfvk: FfiConverterArrayBuffer.readFromCursor(c),
+        spendingKey: FfiConverterOptionalBytes.readFromCursor(c),
+      }
+    }
+    writeIntoCursor(value: TypeName, c: Cursor): void {
+      FfiConverterArrayBuffer.writeIntoCursor(value.address, c)
+      FfiConverterArrayBuffer.writeIntoCursor(value.ivk, c)
+      FfiConverterArrayBuffer.writeIntoCursor(value.extfvk, c)
+      FfiConverterOptionalBytes.writeIntoCursor(value.spendingKey, c)
+    }
+    allocationSize(value: TypeName): number {
+      return (
+        FfiConverterArrayBuffer.allocationSize(value.address) +
+        FfiConverterArrayBuffer.allocationSize(value.ivk) +
+        FfiConverterArrayBuffer.allocationSize(value.extfvk) +
+        FfiConverterOptionalBytes.allocationSize(value.spendingKey)
+      )
+    }
+  }
+  return new FFIConverter()
+})()
 
 /**
  * Encrypted data. `symmetric_key` is set only when `return_ssk` was true.
+ *
+ * No Debug: printing it would print the key.
  */
 export type EncryptedPayload = {
-    ephemeralPublicKey: ArrayBuffer,
-    encryptedData: ArrayBuffer,
-    symmetricKey?: ArrayBuffer
+  ephemeralPublicKey: ArrayBuffer
+  encryptedData: ArrayBuffer
+  symmetricKey?: ArrayBuffer
 }
 
 /**
  * Generated factory for {@link EncryptedPayload} record objects.
  */
 export const EncryptedPayload = (() => {
-    const defaults = () => ({
-    });
-    const create = (() => {
-        return uniffiCreateRecord<EncryptedPayload, ReturnType<typeof defaults>>(defaults);
-    })();
-    return Object.freeze({
-        create,
-        new: create,
-        defaults: () => Object.freeze(defaults()) as Partial<EncryptedPayload>,
-    });
-})();
+  const defaults = () => ({})
+  const create = (() => {
+    return uniffiCreateRecord<EncryptedPayload, ReturnType<typeof defaults>>(
+      defaults,
+    )
+  })()
+  return Object.freeze({
+    create,
+    new: create,
+    defaults: () => Object.freeze(defaults()) as Partial<EncryptedPayload>,
+  })
+})()
 
 const FfiConverterTypeEncryptedPayload = (() => {
-    type TypeName = EncryptedPayload;
-    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
-        readFromCursor(c: Cursor): TypeName {
-            return {
-                ephemeralPublicKey: FfiConverterArrayBuffer.readFromCursor(c), 
-                encryptedData: FfiConverterArrayBuffer.readFromCursor(c), 
-                symmetricKey: FfiConverterOptionalBytes.readFromCursor(c)
-            };
-        }
-        writeIntoCursor(value: TypeName, c: Cursor): void {
-            FfiConverterArrayBuffer.writeIntoCursor(value.ephemeralPublicKey, c);
-            FfiConverterArrayBuffer.writeIntoCursor(value.encryptedData, c);
-            FfiConverterOptionalBytes.writeIntoCursor(value.symmetricKey, c);
-        }
-        allocationSize(value: TypeName): number {
-            return FfiConverterArrayBuffer.allocationSize(value.ephemeralPublicKey) +
-             FfiConverterArrayBuffer.allocationSize(value.encryptedData) +
-             FfiConverterOptionalBytes.allocationSize(value.symmetricKey);
-            
-        }
-    };
-    return new FFIConverter();
-})();
+  type TypeName = EncryptedPayload
+  class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+    readFromCursor(c: Cursor): TypeName {
+      return {
+        ephemeralPublicKey: FfiConverterArrayBuffer.readFromCursor(c),
+        encryptedData: FfiConverterArrayBuffer.readFromCursor(c),
+        symmetricKey: FfiConverterOptionalBytes.readFromCursor(c),
+      }
+    }
+    writeIntoCursor(value: TypeName, c: Cursor): void {
+      FfiConverterArrayBuffer.writeIntoCursor(value.ephemeralPublicKey, c)
+      FfiConverterArrayBuffer.writeIntoCursor(value.encryptedData, c)
+      FfiConverterOptionalBytes.writeIntoCursor(value.symmetricKey, c)
+    }
+    allocationSize(value: TypeName): number {
+      return (
+        FfiConverterArrayBuffer.allocationSize(value.ephemeralPublicKey) +
+        FfiConverterArrayBuffer.allocationSize(value.encryptedData) +
+        FfiConverterOptionalBytes.allocationSize(value.symmetricKey)
+      )
+    }
+  }
+  return new FFIConverter()
+})()
+
+/**
+ * The sizes and ranges the library checks, from veruszsupportcore's limits.
+ */
+export type Limits = {
+  /**
+   * The largest hdIndex or encryptionIndex.
+   */
+  maxIndex: number
+  seedLengths: Array<number>
+  spendingKeyBytes: number
+  paymentAddressBytes: number
+  identityIdBytes: number
+  ivkBytes: number
+  epkBytes: number
+  sskBytes: number
+  tagBytes: number
+  maxPayloadBytes: number
+  saltBytes: number
+}
+
+/**
+ * Generated factory for {@link Limits} record objects.
+ */
+export const Limits = (() => {
+  const defaults = () => ({})
+  const create = (() => {
+    return uniffiCreateRecord<Limits, ReturnType<typeof defaults>>(defaults)
+  })()
+  return Object.freeze({
+    create,
+    new: create,
+    defaults: () => Object.freeze(defaults()) as Partial<Limits>,
+  })
+})()
+
+const FfiConverterTypeLimits = (() => {
+  type TypeName = Limits
+  class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+    readFromCursor(c: Cursor): TypeName {
+      return {
+        maxIndex: FfiConverterUInt32.readFromCursor(c),
+        seedLengths: FfiConverterSequenceUInt32.readFromCursor(c),
+        spendingKeyBytes: FfiConverterUInt32.readFromCursor(c),
+        paymentAddressBytes: FfiConverterUInt32.readFromCursor(c),
+        identityIdBytes: FfiConverterUInt32.readFromCursor(c),
+        ivkBytes: FfiConverterUInt32.readFromCursor(c),
+        epkBytes: FfiConverterUInt32.readFromCursor(c),
+        sskBytes: FfiConverterUInt32.readFromCursor(c),
+        tagBytes: FfiConverterUInt32.readFromCursor(c),
+        maxPayloadBytes: FfiConverterUInt32.readFromCursor(c),
+        saltBytes: FfiConverterUInt32.readFromCursor(c),
+      }
+    }
+    writeIntoCursor(value: TypeName, c: Cursor): void {
+      FfiConverterUInt32.writeIntoCursor(value.maxIndex, c)
+      FfiConverterSequenceUInt32.writeIntoCursor(value.seedLengths, c)
+      FfiConverterUInt32.writeIntoCursor(value.spendingKeyBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.paymentAddressBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.identityIdBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.ivkBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.epkBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.sskBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.tagBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.maxPayloadBytes, c)
+      FfiConverterUInt32.writeIntoCursor(value.saltBytes, c)
+    }
+    allocationSize(value: TypeName): number {
+      return (
+        FfiConverterUInt32.allocationSize(value.maxIndex) +
+        FfiConverterSequenceUInt32.allocationSize(value.seedLengths) +
+        FfiConverterUInt32.allocationSize(value.spendingKeyBytes) +
+        FfiConverterUInt32.allocationSize(value.paymentAddressBytes) +
+        FfiConverterUInt32.allocationSize(value.identityIdBytes) +
+        FfiConverterUInt32.allocationSize(value.ivkBytes) +
+        FfiConverterUInt32.allocationSize(value.epkBytes) +
+        FfiConverterUInt32.allocationSize(value.sskBytes) +
+        FfiConverterUInt32.allocationSize(value.tagBytes) +
+        FfiConverterUInt32.allocationSize(value.maxPayloadBytes) +
+        FfiConverterUInt32.allocationSize(value.saltBytes)
+      )
+    }
+  }
+  return new FFIConverter()
+})()
 
 // Hermes (React Native ≥ 0.74) ships TextEncoder and encodeInto, but not
 // TextDecoder. For single-string decode (bytesToString), we polyfill via the
@@ -197,216 +404,229 @@ const FfiConverterTypeEncryptedPayload = (() => {
 // call, due to the per-read view allocation and extra property lookups in
 // string_from_buffer.
 const stringConverter = (() => {
-    const encoder = new TextEncoder();
-    const decoder: { decode(input: UniffiByteArray): string } =
-        typeof TextDecoder !== "undefined"
-            ? new TextDecoder()
-            : {
-                  decode: (bytes: UniffiByteArray) =>
-                      nativeModule().ubrn_uniffi_internal_fn_func_ffi__string_from_buffer(
-                          bytes,
-                          undefined as any,
-                      ) as string,
-              };
-    return {
-        // Single-string lower() uses the C++ helper — TextEncoder.encode
-        // measured ~43% slower on takeString benchmarks.
-        stringToBytes: (s: string) =>
-            nativeModule().ubrn_uniffi_internal_fn_func_ffi__string_to_buffer(s, undefined as any),
-        bytesToString: (ab: UniffiByteArray) => decoder.decode(ab),
-        // Direct C++ call — bypasses uniffiCaller.rustCall() overhead.
-        // Matters for N-element arrays.
-        stringByteLength: (s: string) =>
-            nativeModule().ubrn_uniffi_internal_fn_func_ffi__string_to_byte_length(s, undefined as any) as number,
-        // Encode directly into the RustBuffer backing store via
-        // TextEncoder.encodeInto — zero intermediate allocation. Replaces
-        // the old C++ write_string_into_buffer helper.
-        writeStringIntoBuffer: (s: string, buf: any, offset: number): number => {
-            const view = new Uint8Array(
-                buf.arrayBuffer,
-                offset,
-                buf.arrayBuffer.byteLength - offset,
-            );
-            return encoder.encodeInto(s, view).written;
-        },
-        // Dedicated C++ helper — avoids per-read Uint8Array allocation and
-        // the double property-lookup in string_from_buffer.
-        readStringFromBuffer: (buf: any, offset: number, length: number): string =>
-            nativeModule().ubrn_uniffi_internal_fn_func_ffi__read_string_from_buffer(buf, offset, length) as string,
-    };
-})();
-const FfiConverterString = uniffiCreateFfiConverterString(stringConverter);
+  const encoder = new TextEncoder()
+  const decoder: {decode(input: UniffiByteArray): string} =
+    typeof TextDecoder !== 'undefined'
+      ? new TextDecoder()
+      : {
+          decode: (bytes: UniffiByteArray) =>
+            nativeModule().ubrn_uniffi_internal_fn_func_ffi__string_from_buffer(
+              bytes,
+              undefined as any,
+            ) as string,
+        }
+  return {
+    // Single-string lower() uses the C++ helper — TextEncoder.encode
+    // measured ~43% slower on takeString benchmarks.
+    stringToBytes: (s: string) =>
+      nativeModule().ubrn_uniffi_internal_fn_func_ffi__string_to_buffer(
+        s,
+        undefined as any,
+      ),
+    bytesToString: (ab: UniffiByteArray) => decoder.decode(ab),
+    // Direct C++ call — bypasses uniffiCaller.rustCall() overhead.
+    // Matters for N-element arrays.
+    stringByteLength: (s: string) =>
+      nativeModule().ubrn_uniffi_internal_fn_func_ffi__string_to_byte_length(
+        s,
+        undefined as any,
+      ) as number,
+    // Encode directly into the RustBuffer backing store via
+    // TextEncoder.encodeInto — zero intermediate allocation. Replaces
+    // the old C++ write_string_into_buffer helper.
+    writeStringIntoBuffer: (s: string, buf: any, offset: number): number => {
+      const view = new Uint8Array(
+        buf.arrayBuffer,
+        offset,
+        buf.arrayBuffer.byteLength - offset,
+      )
+      return encoder.encodeInto(s, view).written
+    },
+    // Dedicated C++ helper — avoids per-read Uint8Array allocation and
+    // the double property-lookup in string_from_buffer.
+    readStringFromBuffer: (buf: any, offset: number, length: number): string =>
+      nativeModule().ubrn_uniffi_internal_fn_func_ffi__read_string_from_buffer(
+        buf,
+        offset,
+        length,
+      ) as string,
+  }
+})()
+const FfiConverterString = uniffiCreateFfiConverterString(stringConverter)
 
-
-// Error type: ZSupportError
-export enum ZSupportError_Tags {
-    InvalidInput = "InvalidInput",
-    Crypto = "Crypto"
+// Error type: VerusZSupportError
+export enum VerusZSupportError_Tags {
+  InvalidInput = 'InvalidInput',
+  Crypto = 'Crypto',
 }
 /**
- * The error React Native callers catch. Same two kinds as veruszsupportcore.
+ * The error React Native callers catch. Same two kinds, and the same
+ * messages, as veruszsupportcore and the web package.
  */
-export const ZSupportError = (() => {
-
-    type InvalidInput__interface = {
-        tag: ZSupportError_Tags.InvalidInput;
-        inner: 
-Readonly<{message: string}>
-    };
+export const VerusZSupportError = (() => {
+  type InvalidInput__interface = {
+    tag: VerusZSupportError_Tags.InvalidInput
+    inner: Readonly<{message: string}>
+  }
+  /**
+   * The library rejected the arguments before any cryptography ran. The
+   * call must change to succeed.
+   */
+  class InvalidInput_ extends UniffiError implements InvalidInput__interface {
     /**
-     * The caller passed a bad value. The call must change to succeed.
+     * @private
+     * This field is private and should not be used, use `tag` instead.
      */
-    class InvalidInput_ extends UniffiError implements InvalidInput__interface {
-        /**
-         * @private
-         * This field is private and should not be used, use `tag` instead.
-         */
-        readonly [uniffiTypeNameSymbol] = "ZSupportError";
-        readonly tag = ZSupportError_Tags.InvalidInput;
-        readonly inner: 
-Readonly<{message: string}>;
-        constructor(
-inner: {message: string }) {
-            super("ZSupportError", "InvalidInput");
+    readonly [uniffiTypeNameSymbol] = 'VerusZSupportError'
+    readonly tag = VerusZSupportError_Tags.InvalidInput
+    readonly inner: Readonly<{message: string}>
+    constructor(inner: {message: string}) {
+      super('VerusZSupportError', 'InvalidInput')
 
-            this.inner = Object.freeze(inner);
-        }
-        static new(
-inner: {message: string }): InvalidInput_ {
-            return new InvalidInput_(inner);
-        }
-
-        static instanceOf(obj: any): obj is InvalidInput_ {
-            return obj.tag === ZSupportError_Tags.InvalidInput;
-        }
-        static hasInner(obj: any): obj is InvalidInput_ {
-            return InvalidInput_.instanceOf(obj);
-        }
-
-        static getInner(obj: InvalidInput_): 
-Readonly<{message: string}> {
-            return obj.inner;
-        }
-
+      this.inner = Object.freeze(inner)
+    }
+    static new(inner: {message: string}): InvalidInput_ {
+      return new InvalidInput_(inner)
     }
 
-    type Crypto__interface = {
-        tag: ZSupportError_Tags.Crypto;
-        inner: 
-Readonly<{message: string}>
-    };
+    static instanceOf(obj: any): obj is InvalidInput_ {
+      return obj.tag === VerusZSupportError_Tags.InvalidInput
+    }
+    static hasInner(obj: any): obj is InvalidInput_ {
+      return InvalidInput_.instanceOf(obj)
+    }
+
+    static getInner(obj: InvalidInput_): Readonly<{message: string}> {
+      return obj.inner
+    }
+  }
+
+  type Crypto__interface = {
+    tag: VerusZSupportError_Tags.Crypto
+    inner: Readonly<{message: string}>
+  }
+  /**
+   * The cryptography failed: a key that is not valid, the wrong key or a
+   * changed ciphertext.
+   */
+  class Crypto_ extends UniffiError implements Crypto__interface {
     /**
-     * verus_zfunc failed, for example a wrong key or a changed ciphertext.
+     * @private
+     * This field is private and should not be used, use `tag` instead.
      */
-    class Crypto_ extends UniffiError implements Crypto__interface {
-        /**
-         * @private
-         * This field is private and should not be used, use `tag` instead.
-         */
-        readonly [uniffiTypeNameSymbol] = "ZSupportError";
-        readonly tag = ZSupportError_Tags.Crypto;
-        readonly inner: 
-Readonly<{message: string}>;
-        constructor(
-inner: {message: string }) {
-            super("ZSupportError", "Crypto");
+    readonly [uniffiTypeNameSymbol] = 'VerusZSupportError'
+    readonly tag = VerusZSupportError_Tags.Crypto
+    readonly inner: Readonly<{message: string}>
+    constructor(inner: {message: string}) {
+      super('VerusZSupportError', 'Crypto')
 
-            this.inner = Object.freeze(inner);
-        }
-        static new(
-inner: {message: string }): Crypto_ {
-            return new Crypto_(inner);
-        }
-
-        static instanceOf(obj: any): obj is Crypto_ {
-            return obj.tag === ZSupportError_Tags.Crypto;
-        }
-        static hasInner(obj: any): obj is Crypto_ {
-            return Crypto_.instanceOf(obj);
-        }
-
-        static getInner(obj: Crypto_): 
-Readonly<{message: string}> {
-            return obj.inner;
-        }
-
+      this.inner = Object.freeze(inner)
+    }
+    static new(inner: {message: string}): Crypto_ {
+      return new Crypto_(inner)
     }
 
-    function instanceOf(obj: any): obj is ZSupportError {
-        return obj[uniffiTypeNameSymbol] === "ZSupportError";
+    static instanceOf(obj: any): obj is Crypto_ {
+      return obj.tag === VerusZSupportError_Tags.Crypto
+    }
+    static hasInner(obj: any): obj is Crypto_ {
+      return Crypto_.instanceOf(obj)
     }
 
-    return Object.freeze({
-        instanceOf,
-  InvalidInput: InvalidInput_, 
-  Crypto: Crypto_
-    });
+    static getInner(obj: Crypto_): Readonly<{message: string}> {
+      return obj.inner
+    }
+  }
 
-})();
+  function instanceOf(obj: any): obj is VerusZSupportError {
+    return obj[uniffiTypeNameSymbol] === 'VerusZSupportError'
+  }
+
+  return Object.freeze({
+    instanceOf,
+    InvalidInput: InvalidInput_,
+    Crypto: Crypto_,
+  })
+})()
 /**
- * The error React Native callers catch. Same two kinds as veruszsupportcore.
+ * The error React Native callers catch. Same two kinds, and the same
+ * messages, as veruszsupportcore and the web package.
  */
-export type ZSupportError = InstanceType<
-    typeof ZSupportError['InvalidInput' | 'Crypto']
->;
+export type VerusZSupportError = InstanceType<
+  (typeof VerusZSupportError)['InvalidInput' | 'Crypto']
+>
 
-// FfiConverter for enum ZSupportError
-const FfiConverterTypeZSupportError = (() => {
-    type TypeName = ZSupportError;
-    class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
-        readFromCursor(c: Cursor): TypeName {
-            switch (c.readI32()) {
-                case 1: return new ZSupportError.InvalidInput({message: FfiConverterString.readFromCursor(c) });
-                case 2: return new ZSupportError.Crypto({message: FfiConverterString.readFromCursor(c) });
-                default: throw new UniffiInternalError.UnexpectedEnumCase();
-            }
-        }
-        writeIntoCursor(value: TypeName, c: Cursor): void {
-            switch (value.tag) {
-                case ZSupportError_Tags.InvalidInput: {
-                    c.writeI32(1);
-                    const inner = value.inner;
-                    FfiConverterString.writeIntoCursor(inner.message, c);
-                    return;
-                }
-                case ZSupportError_Tags.Crypto: {
-                    c.writeI32(2);
-                    const inner = value.inner;
-                    FfiConverterString.writeIntoCursor(inner.message, c);
-                    return;
-                }
-                default:
-                    // Throwing from here means that ZSupportError_Tags hasn't matched an ordinal.
-                    throw new UniffiInternalError.UnexpectedEnumCase();
-            }
-        }
-        allocationSize(value: TypeName): number {
-            switch (value.tag) {
-                case ZSupportError_Tags.InvalidInput: {
-                    const inner = value.inner;
-                    let size = 4;
-                    size += FfiConverterString.allocationSize(inner.message);
-                    return size;
-                }
-                case ZSupportError_Tags.Crypto: {
-                    const inner = value.inner;
-                    let size = 4;
-                    size += FfiConverterString.allocationSize(inner.message);
-                    return size;
-                }
-                default: throw new UniffiInternalError.UnexpectedEnumCase();
-            }
-        }
+// FfiConverter for enum VerusZSupportError
+const FfiConverterTypeVerusZSupportError = (() => {
+  type TypeName = VerusZSupportError
+  class FFIConverter extends AbstractFfiConverterByteArray<TypeName> {
+    readFromCursor(c: Cursor): TypeName {
+      switch (c.readI32()) {
+        case 1:
+          return new VerusZSupportError.InvalidInput({
+            message: FfiConverterString.readFromCursor(c),
+          })
+        case 2:
+          return new VerusZSupportError.Crypto({
+            message: FfiConverterString.readFromCursor(c),
+          })
+        default:
+          throw new UniffiInternalError.UnexpectedEnumCase()
+      }
     }
-    return new FFIConverter();
-})();
+    writeIntoCursor(value: TypeName, c: Cursor): void {
+      switch (value.tag) {
+        case VerusZSupportError_Tags.InvalidInput: {
+          c.writeI32(1)
+          const inner = value.inner
+          FfiConverterString.writeIntoCursor(inner.message, c)
+          return
+        }
+        case VerusZSupportError_Tags.Crypto: {
+          c.writeI32(2)
+          const inner = value.inner
+          FfiConverterString.writeIntoCursor(inner.message, c)
+          return
+        }
+        default:
+          // Throwing from here means that VerusZSupportError_Tags hasn't matched an ordinal.
+          throw new UniffiInternalError.UnexpectedEnumCase()
+      }
+    }
+    allocationSize(value: TypeName): number {
+      switch (value.tag) {
+        case VerusZSupportError_Tags.InvalidInput: {
+          const inner = value.inner
+          let size = 4
+          size += FfiConverterString.allocationSize(inner.message)
+          return size
+        }
+        case VerusZSupportError_Tags.Crypto: {
+          const inner = value.inner
+          let size = 4
+          size += FfiConverterString.allocationSize(inner.message)
+          return size
+        }
+        default:
+          throw new UniffiInternalError.UnexpectedEnumCase()
+      }
+    }
+  }
+  return new FFIConverter()
+})()
 
 // FfiConverter for ArrayBuffer | undefined
-const FfiConverterOptionalBytes = new FfiConverterOptional(FfiConverterArrayBuffer);
+const FfiConverterOptionalBytes = new FfiConverterOptional(
+  FfiConverterArrayBuffer,
+)
+
+// FfiConverter for Array<number>
+const FfiConverterSequenceUInt32 = new FfiConverterArray(FfiConverterUInt32)
 
 // FfiConverter for number | undefined
-const FfiConverterOptionalUInt32 = new FfiConverterOptional(FfiConverterUInt32);
-
+const FfiConverterOptionalFloat64 = new FfiConverterOptional(
+  FfiConverterFloat64,
+)
 
 /**
  * This should be called before anything else.
@@ -419,30 +639,65 @@ const FfiConverterOptionalUInt32 = new FfiConverterOptional(FfiConverterUInt32);
  * It also initializes the machinery to enable Rust to talk back to Javascript.
  */
 function uniffiEnsureInitialized() {
-    // Get the bindings contract version from our ComponentInterface
-    const bindingsContractVersion = 30;
-    // Get the scaffolding contract version by calling the into the dylib
-    const scaffoldingContractVersion = nativeModule().ubrn_ffi_veruszsupportmobile_uniffi_contract_version();
-    if (bindingsContractVersion !== scaffoldingContractVersion) {
-        throw new UniffiInternalError.ContractVersionMismatch(scaffoldingContractVersion, bindingsContractVersion);
-    }
-    if (nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_decrypt_v_data() !== 4729) {
-        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_veruszsupportmobile_checksum_func_decrypt_v_data");
-    }
-    if (nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_encrypt_v_data() !== 29204) {
-        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_veruszsupportmobile_checksum_func_encrypt_v_data");
-    }
-    if (nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_z_get_encryptionaddress() !== 27931) {
-        throw new UniffiInternalError.ApiChecksumMismatch("uniffi_veruszsupportmobile_checksum_func_z_get_encryptionaddress");
-    }
-
-    }
+  // Get the bindings contract version from our ComponentInterface
+  const bindingsContractVersion = 30
+  // Get the scaffolding contract version by calling the into the dylib
+  const scaffoldingContractVersion =
+    nativeModule().ubrn_ffi_veruszsupportmobile_uniffi_contract_version()
+  if (bindingsContractVersion !== scaffoldingContractVersion) {
+    throw new UniffiInternalError.ContractVersionMismatch(
+      scaffoldingContractVersion,
+      bindingsContractVersion,
+    )
+  }
+  if (
+    nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_decrypt_data() !==
+    13185
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_veruszsupportmobile_checksum_func_decrypt_data',
+    )
+  }
+  if (
+    nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_encrypt_data() !==
+    61534
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_veruszsupportmobile_checksum_func_encrypt_data',
+    )
+  }
+  if (
+    nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_fresh_salt() !==
+    29921
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_veruszsupportmobile_checksum_func_fresh_salt',
+    )
+  }
+  if (
+    nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_limits() !==
+    40137
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_veruszsupportmobile_checksum_func_limits',
+    )
+  }
+  if (
+    nativeModule().ubrn_uniffi_veruszsupportmobile_checksum_func_z_get_encryption_address() !==
+    21875
+  ) {
+    throw new UniffiInternalError.ApiChecksumMismatch(
+      'uniffi_veruszsupportmobile_checksum_func_z_get_encryption_address',
+    )
+  }
+}
 
 export default Object.freeze({
   initialize: uniffiEnsureInitialized,
   converters: {
     FfiConverterTypeChannelKeys,
     FfiConverterTypeEncryptedPayload,
-    FfiConverterTypeZSupportError,
-  }
-});
+    FfiConverterTypeLimits,
+    FfiConverterTypeVerusZSupportError,
+  },
+})

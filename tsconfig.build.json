@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  // Only the web build needs declarations: React Native runs src/ itself.
+  // engine.native.ts is type checked by `pnpm typecheck`.
+  "exclude": ["src/engine.native.ts"]
+}

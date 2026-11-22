@@ -5,7 +5,7 @@
 #![cfg(target_arch = "wasm32")]
 
 use js_sys::{Array, Error, Reflect, Uint8Array};
-use veruszsupport::{decrypt_data, encrypt_data, fresh_salt, limits, z_get_encryption_address};
+use veruszsupportweb::{decrypt_data, encrypt_data, fresh_salt, limits, z_get_encryption_address};
 use veruszsupportcore::limits::LIMITS;
 use veruszsupporttests::{
     from_hex, to_hex, ADDRESS, DECRYPTION_FAILED, FROM_ID, HD_INDEX_REFUSED, IVK, SEED, TO_ID,

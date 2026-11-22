@@ -18,7 +18,7 @@ veruszsupportmobile = { path = "../veruszsupportmobile" }
 
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 js-sys = "0.3"
-veruszsupport = { path = "../veruszsupportweb" }
+veruszsupportweb = { path = "../veruszsupportweb" }
 wasm-bindgen = "0.2.100"
 # Runs web.rs inside Node. Pairs with the wasm-bindgen in Cargo.lock (0.2.114).
 wasm-bindgen-test = "0.3.64"
