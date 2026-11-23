@@ -1,4 +1,7 @@
-/** Optional index: undefined/null → null; otherwise must be an integer in hardened range. */
-export declare function assertIndex(v: unknown, field: string): number | null;
-/** Optional flag: undefined → false; otherwise must be a real boolean (no coercion). */
-export declare function assertFlag(v: unknown, field: string): boolean;
+/** An optional flag: null and undefined are false, anything else must be a boolean. */
+export declare function checkFlag(value: unknown, field: string): boolean;
+export declare function checkBytes(value: unknown, field: string): Uint8Array;
+/** Optional bytes: null and undefined both mean not given. */
+export declare function checkOptionalBytes(value: unknown, field: string): Uint8Array | undefined;
+/** An optional number: null and undefined both mean not given. */
+export declare function checkOptionalNumber(value: unknown, field: string): number | undefined;
